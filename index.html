@@ -245,36 +245,17 @@
             </div>
           </div>
 
-          <!-- Progress Bar -->
-          <div>
-            <div class="flex justify-between text-xs font-medium text-slate-600 mb-1.5">
-              <span id="progressStatusText">파일을 업로드해 주세요</span>
-              <span id="progressPercentText">0%</span>
-            </div>
-            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-              <div id="progressBar" class="h-full bg-indigo-600 transition-all duration-300 w-0"></div>
-            </div>
-          </div>
-
-          <!-- Savings Highlight Banner -->
+          <!-- Savings Highlight Banner (다운로드 버튼은 아래 '세부 압축 옵션 설정' 카드로 옮김) -->
           <div id="resultSummaryBox" class="hidden p-4 rounded-xl bg-emerald-50 border border-emerald-200">
-            <div class="flex items-center justify-between gap-2">
-              <div>
-                <p class="text-xs font-semibold text-emerald-800">최종 절감된 용량</p>
-                <p id="savedBadgeText" class="text-lg font-black text-emerald-700 mt-0.5">0% 감소</p>
-              </div>
-              <a id="downloadLink" href="#" download="compressed.pdf" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm flex items-center gap-1.5 transition shrink-0">
-                <i data-lucide="download" class="w-4 h-4"></i>
-                <span>압축 PDF 다운로드</span>
-              </a>
-            </div>
+            <p class="text-xs font-semibold text-emerald-800">최종 절감된 용량</p>
+            <p id="savedBadgeText" class="text-lg font-black text-emerald-700 mt-0.5">0% 감소</p>
           </div>
         </section>
 
         <!-- Logo Image Inserted in Between: 박스 선·그림자·흰 배경 없이 페이지 배경과 하나로 보이게 함.
              flex-1 로 오른쪽 열이 더 짧을 때 남는 높이를 이 영역이 채워 아래 박스 위치를 맞춤 -->
         <div class="flex-1 flex items-center justify-center py-1">
-          <img src="logo.png" alt="PDF Diet Pro Logo" class="max-h-32 w-auto object-contain mix-blend-multiply" />
+          <img src="logo.png" alt="PDF Diet Pro Logo" class="max-h-24 w-auto object-contain mix-blend-multiply" />
         </div>
 
         <!-- Step 3: Fine-tuning Options (Bottom of Right Column) -->
@@ -304,22 +285,40 @@
             <!-- Target DPI / Scale Select -->
             <div id="dpiWrapper" class="bg-slate-50 p-4 rounded-xl border border-slate-200 transition-all">
               <div class="flex justify-between items-center mb-2">
-                <label for="dpiInput" class="text-xs font-bold text-slate-700">목표 해상도 (DPI / 스케일)</label>
+                <label for="dpiInput" class="text-xs font-bold text-slate-700">목표 해상도 (DPI)</label>
                 <span id="dpiValueLabel" class="text-xs font-bold text-indigo-600">150 DPI (웹/화면용)</span>
               </div>
               <select id="dpiInput" class="w-full mt-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:border-indigo-600">
                 <option value="72">72 DPI — 최소 용량 (모바일/열람용)</option>
                 <option value="150" selected>150 DPI — 표준 균형 (일반 문서 권장)</option>
-                <option value="220">220 DPI — 고화질 유지 (프린트 겸용)</option>
+                <option value="220">220 DPI — 고화질 유지 (화면 + 간단한 인쇄)</option>
+                <option value="300">300 DPI — 인쇄용 (시험지·인쇄물)</option>
               </select>
             </div>
           </div>
 
-          <!-- Action Button -->
-          <button id="compressBtn" disabled class="mt-6 w-full py-3.5 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
-            <i data-lucide="zap" class="w-4 h-4"></i>
-            <span>전체 페이지 PDF 용량 줄이기 실행</span>
-          </button>
+          <!-- Progress Bar (결과 카드에서 이 자리로 옮김) -->
+          <div class="mt-5">
+            <div class="flex justify-between text-xs font-medium text-slate-600 mb-1.5">
+              <span id="progressStatusText">파일을 업로드해 주세요</span>
+              <span id="progressPercentText">0%</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+              <div id="progressBar" class="h-full bg-indigo-600 transition-all duration-300 w-0"></div>
+            </div>
+          </div>
+
+          <!-- Action Buttons: 왼쪽 실행, 오른쪽 다운로드 -->
+          <div class="mt-4 grid grid-cols-2 gap-3">
+            <button id="compressBtn" disabled class="py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>PDF 용량 줄이기</span>
+            </button>
+            <a id="downloadLink" href="#" download="compressed.pdf" aria-disabled="true" tabindex="-1" class="py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2 opacity-40 pointer-events-none">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>압축 PDF 다운로드</span>
+            </a>
+          </div>
         </section>
 
       </div>
@@ -403,6 +402,14 @@
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
 
+    // 한글 등 글꼴이 PDF에 통째로 들어 있지 않은 글자를 그리는 데 필요한 글자 대응표(CMap)와 표준 글꼴 위치
+    // (PDF.js 버전 3.11.174와 같은 버전이어야 함)
+    const PDFJS_OPTS = {
+      cMapUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/cmaps/',
+      cMapPacked: true,
+      standardFontDataUrl: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/standard_fonts/'
+    };
+
     // Application State
     let currentFile = null;
     let currentBuffer = null;
@@ -453,6 +460,14 @@
     const resultSummaryBox = document.getElementById('resultSummaryBox');
     const savedBadgeText = document.getElementById('savedBadgeText');
     const downloadLink = document.getElementById('downloadLink');
+
+    // 압축 결과가 있을 때만 다운로드 버튼을 누를 수 있게 함
+    function setDownloadEnabled(enabled) {
+      downloadLink.classList.toggle('opacity-40', !enabled);
+      downloadLink.classList.toggle('pointer-events-none', !enabled);
+      downloadLink.setAttribute('aria-disabled', String(!enabled));
+      downloadLink.tabIndex = enabled ? 0 : -1;
+    }
 
     // Comparison Preview Elements
     const previewPageSelect = document.getElementById('previewPageSelect');
@@ -536,8 +551,8 @@
       const imgBytes = pdfStats.imageStreamBytes;
       const nonImgBytes = Math.max(0, total - imgBytes);
 
-      const dpiScaleMap = { 72: 0.28, 150: 0.56, 220: 0.82 };
-      const dpiFactor = dpiScaleMap[opts.dpi] || 0.56;
+      // 해상도에 따른 대략적인 크기 비율(면적 비례, 300dpi 이상은 거의 줄지 않음). 실측값이 나오기 전 잠깐만 쓰임
+      const dpiFactor = Math.min(1, Math.pow(opts.dpi / 200, 2));
       const qFactor = Math.pow(opts.quality, 1.55);
 
       let estimated = total;
@@ -549,21 +564,17 @@
           estimated = compressedImg + nonImgBytes * overheadFactor;
         } else {
           const structOnly = total * 0.93 * 0.90;
-          const perPageRasterEst = totalPages * (opts.dpi === 72 ? 65000 : opts.dpi === 150 ? 145000 : 260000) * qFactor;
+          const perPageRasterEst = totalPages * 145000 * Math.pow(opts.dpi / 150, 2) * qFactor;
           estimated = Math.min(structOnly, perPageRasterEst);
         }
       } else if (opts.mode === 'DEEP_GS_WASM') {
         const compressedImg = imgBytes * Math.min(0.90, dpiFactor * qFactor * 1.15 + 0.06);
-        const compressedNonImg = nonImgBytes * (opts.dpi === 72 ? 0.48 : opts.dpi === 150 ? 0.62 : 0.78);
+        const compressedNonImg = nonImgBytes * Math.min(0.9, 0.48 + (opts.dpi - 72) / 228 * 0.4);
         estimated = compressedImg + compressedNonImg;
       } else if (opts.mode === 'EXTREME_RASTER') {
-        const basePageBytes = opts.dpi === 72 ? 75000 : opts.dpi === 150 ? 175000 : 320000;
+        const basePageBytes = 175000 * Math.pow(opts.dpi / 150, 2);
         const rasterEst = totalPages * basePageBytes * (0.35 + 0.85 * qFactor);
         estimated = Math.min(total * dpiFactor * (0.4 + 0.7 * qFactor), rasterEst);
-      }
-
-      if (pdfStats.measuredSampleRatio !== null) {
-        estimated = estimated * 0.4 + (total * pdfStats.measuredSampleRatio) * 0.6;
       }
 
       estimated = Math.min(total, estimated);
@@ -579,20 +590,194 @@
       }
 
       const origBytes = currentBuffer.byteLength;
-      const estBytes = calculateEstimatedSizeBytes();
+      const best = getBestEstimate();
+      const estBytes = best.bytes;
       const savedBytes = Math.max(0, origBytes - estBytes);
       const savedPct = origBytes > 0 ? ((savedBytes / origBytes) * 100).toFixed(1) : '0.0';
 
       estSizeMetric.textContent = `약 ${formatBytes(estBytes)}`;
-      estRatioSub.textContent = savedBytes > 0 ? `예상 -${savedPct}% 절감` : `이미 최적화됨`;
+      if (best.measured) {
+        estRatioSub.textContent = savedBytes > 0 ? `-${savedPct}% · ${best.note}` : `이미 최적화됨 · ${best.note}`;
+      } else {
+        estRatioSub.textContent = '실측 계산 중…';
+      }
 
       origPreviewHeaderLabel.textContent = `원본 (${formatBytes(origBytes)})`;
       compPreviewHeaderLabel.textContent = `압축본 (예상 약 ${formatBytes(estBytes)} / -${savedPct}%)`;
     }
 
+    // ===== 실측 기반 예상 용량 =====
+    // 공식으로 짐작하지 않고, 실제 압축에 쓰는 함수 그대로 이미지 몇 개(또는 쪽 몇 장)를
+    // 직접 압축해 보고 그 결과로 전체 크기를 추정한다.
+    const estState = { fileKey: 0, structure: null, structureP: null, results: new Map(), timer: null, runId: 0 };
+    const estimateKey = (o) => `${o.mode}|${o.quality}|${o.dpi}`;
+
+    function resetMeasuredEstimate() {
+      estState.fileKey++;
+      estState.structure = null;
+      estState.structureP = null;
+      estState.results.clear();
+      clearTimeout(estState.timer);
+    }
+
+    function getBestEstimate() {
+      const r = currentBuffer ? estState.results.get(estimateKey(getCurrentOptions())) : null;
+      return r ? { bytes: r.bytes, measured: true, note: r.note } : { bytes: calculateEstimatedSizeBytes(), measured: false };
+    }
+
+    // 방식 1의 '구조 정리'(메타데이터 비우기 + 새 문서로 쪽 복사 + 객체 스트림 저장)만 했을 때의 실제 크기와,
+    // 그 결과 안에 남아 방식 1이 다시 압축하게 될 이미지 목록. 화질·해상도와 무관해서 파일당 한 번만 계산한다.
+    function getStructureInfo() {
+      if (estState.structure) return Promise.resolve(estState.structure);
+      if (estState.structureP) return estState.structureP;
+      const buf = currentBuffer, key = estState.fileKey;
+      const p = (async () => {
+        const pdfDoc = await PDFLib.PDFDocument.load(buf.slice(0), { ignoreEncryption: true });
+        pdfDoc.setTitle(''); pdfDoc.setAuthor(''); pdfDoc.setSubject('');
+        pdfDoc.setKeywords([]); pdfDoc.setProducer(''); pdfDoc.setCreator('');
+        const cleanDoc = await PDFLib.PDFDocument.create();
+        const copied = await cleanDoc.copyPages(pdfDoc, pdfDoc.getPageIndices());
+        copied.forEach(pg => cleanDoc.addPage(pg));
+        const saved = await cleanDoc.save({ useObjectStreams: true, addDefaultPage: false });
+        const placements = collectImagePlacements(cleanDoc);
+        const images = [];
+        for (const [ref, obj] of cleanDoc.context.enumerateIndirectObjects()) {
+          if (!(obj instanceof PDFLib.PDFRawStream) || !obj.dict) continue;
+          const subtype = obj.dict.get(PDFLib.PDFName.of('Subtype'));
+          if (!subtype || subtype.toString() !== '/Image') continue;
+          const info = imageInfoOf(obj);
+          if (info.eligible) images.push({ bytes: obj.contents, W: info.W, H: info.H, place: placements.get(ref.tag) });
+        }
+        return { size: saved.byteLength, images, maxSide: maxPageSidePt(cleanDoc) };
+      })();
+      estState.structureP = p;
+      return p.then((r) => { if (key === estState.fileKey) { estState.structure = r; estState.structureP = null; } return r; },
+                    (e) => { if (key === estState.fileKey) estState.structureP = null; throw e; });
+    }
+
+    // 방식 1: 이미지를 용량 순으로 줄 세워 전체 이미지 용량을 10등분하고, 구간마다 대표 이미지 1개를
+    // 실제로 다시 압축해 본 줄어든 비율을 그 구간 용량에 곱한다. 이미지가 10개 이하이면 전부 실측한다.
+    async function measureEngine1(opts, isStale) {
+      const st = await getStructureInfo();
+      if (isStale()) return null;
+      const imgs = [...st.images].sort((a, b) => a.bytes.length - b.bytes.length);
+      const total = imgs.reduce((a, b) => a + b.bytes.length, 0);
+      // 이미지를 크기순으로 줄 세워 전체 이미지 용량을 10구간으로 나누고(큰 이미지 한 장이 한 구간일 수도 있음),
+      // 구간마다 돌아가며 한 장씩 실측한다. 각 구간의 절감률 × 그 구간 용량을 더해 전체 절감량을 추정한다.
+      const K = 10, strata = [];
+      let cur = [], acc = 0, k = 1;
+      for (const im of imgs) {
+        cur.push(im); acc += im.bytes.length;
+        if (k < K && acc >= total * k / K) { strata.push(cur); cur = []; while (k < K && acc >= total * k / K) k++; }
+      }
+      if (cur.length) strata.push(cur);
+      let seed = 12345; const rand = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+      const groups = strata.map(list => {
+        const order = [...list];
+        for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+        return { order, bytes: list.reduce((x, y) => x + y.bytes.length, 0), next: 0, mBytes: 0, mSaved: 0 };
+      });
+      const started = performance.now();
+      let count = 0;
+      for (let round = 0; ; round++) {
+        let did = false;
+        for (const g of groups) {
+          if (g.next >= g.order.length) continue;
+          if (round > 0 && performance.now() - started > 4000) break; // 첫 바퀴는 반드시, 그 뒤로는 약 4초까지만
+          if (isStale()) return null;
+          const im = g.order[g.next++];
+          let ratio = 0;
+          const len = im.bytes.length;
+          try {
+            const scale = scaleForTargetDpi(im.W, im.H, im.place, opts.dpi, st.maxSide);
+            const { outBytes } = await recompressImageBytes(im.bytes, opts.quality, scale);
+            if (outBytes.length < len) ratio = 1 - outBytes.length / len; // 실제 코드도 작아질 때만 바꿈
+          } catch (e) {}
+          g.mBytes += len; g.mSaved += len * ratio; count++; did = true;
+        }
+        if (!did || performance.now() - started > 4000) break;
+      }
+      const saved = groups.reduce((sum, g) => sum + (g.mBytes ? g.bytes * g.mSaved / g.mBytes : 0), 0);
+      return {
+        bytes: Math.max(8192, Math.round(st.size - saved)),
+        note: !imgs.length ? '구조 정리 실측' : count === imgs.length ? `이미지 ${count}개 모두 실측` : `이미지 ${count}/${imgs.length}개 실측`
+      };
+    }
+
+    // 방식 3: 앞·중간·뒤에서 고른 쪽(최대 5쪽)을 실제 설정으로 이미지화해 평균 크기 × 쪽 수.
+    async function measureEngine3(opts, isStale) {
+      const pdf = await pdfjsLib.getDocument({ data: currentBuffer.slice(0), ...PDFJS_OPTS }).promise;
+      try {
+        const n = pdf.numPages;
+        const pageNums = [...new Set([0, 1, 2, 3, 4].map(k => 1 + Math.round(k * (n - 1) / 4)))];
+        const scale = opts.dpi / 72; // 실제 압축과 같은 배율
+        let sum = 0;
+        for (const pn of pageNums) {
+          if (isStale()) return null;
+          const page = await pdf.getPage(pn);
+          const canvas = await renderPageToNewCanvas(page, page.getViewport({ scale }));
+          const url = canvas.toDataURL('image/jpeg', opts.quality);
+          sum += Math.round(url.split(',')[1].length * 3 / 4);
+          canvas.width = canvas.height = 0;
+          page.cleanup();
+        }
+        return { bytes: Math.round(sum / pageNums.length * n + 2000 + n * 500), note: `${pageNums.length}쪽 실측` };
+      } finally {
+        pdf.destroy();
+      }
+    }
+
+    // 실제 압축 실행(compressBtn)과 같은 순서·같은 전환 규칙으로 추정
+    async function measureEstimate(opts, isStale) {
+      const orig = currentBuffer.byteLength;
+      let r;
+      if (opts.mode === 'EXTREME_RASTER') {
+        r = await measureEngine3(opts, isStale);
+      } else {
+        r = await measureEngine1(opts, isStale);
+        if (!r) return null;
+        if (opts.mode === 'FAST_PDFLIB' && r.bytes >= orig * 0.98) {
+          const r3 = await measureEngine3(opts, isStale);
+          if (!r3) return null;
+          if (r3.bytes < r.bytes) r = { bytes: r3.bytes, note: r3.note + '(이미지화 전환)' };
+        }
+        if (opts.mode === 'DEEP_GS_WASM') {
+          if (r.bytes >= orig * 0.92) {
+            const r3 = await measureEngine3({ ...opts, quality: Math.min(0.85, opts.quality + 0.05) }, isStale);
+            if (!r3) return null;
+            r = { bytes: r3.bytes, note: r3.note + '(이미지화 전환)' };
+          }
+          r.note += ' · Ghostscript가 안 될 때 기준';
+        }
+      }
+      if (!r) return null;
+      return { bytes: Math.min(orig, r.bytes), note: r.note };
+    }
+
+    function scheduleMeasuredEstimate() {
+      clearTimeout(estState.timer);
+      if (!currentBuffer) return;
+      const opts = getCurrentOptions();
+      const key = estimateKey(opts);
+      if (estState.results.has(key)) { updateRealTimeEstimateUI(); return; }
+      estState.timer = setTimeout(async () => {
+        const runId = ++estState.runId, fileKey = estState.fileKey;
+        const isStale = () => runId !== estState.runId || fileKey !== estState.fileKey;
+        try {
+          const r = await measureEstimate(opts, isStale);
+          if (!r || isStale()) return;
+          estState.results.set(key, r);
+          updateRealTimeEstimateUI();
+        } catch (e) {
+          console.warn('실측 추정 실패', e);
+          if (!isStale()) estRatioSub.textContent = '실측 실패 · 공식 추정값';
+        }
+      }, 450);
+    }
+
     function onOptionChanged() {
-      pdfStats.measuredSampleRatio = null;
       updateRealTimeEstimateUI();
+      scheduleMeasuredEstimate();
       if (!comparisonViewerSection.classList.contains('hidden') && currentBuffer) {
         renderSideBySidePreview();
       }
@@ -610,7 +795,7 @@
 
     dpiInput.addEventListener('change', () => {
       const val = dpiInput.value;
-      const map = { '72': '72 DPI (모바일/최소)', '150': '150 DPI (웹/화면용)', '220': '220 DPI (인쇄 겸용)' };
+      const map = { '72': '72 DPI (모바일/최소)', '150': '150 DPI (웹/화면용)', '220': '220 DPI (인쇄 겸용)', '300': '300 DPI (인쇄용)' };
       dpiValueLabel.textContent = map[val] || `${val} DPI`;
       onOptionChanged();
     });
@@ -711,6 +896,7 @@
       e.stopPropagation();
       currentFile = null;
       currentBuffer = null;
+      resetMeasuredEstimate();
       fileInput.value = '';
       uploadPrompt.classList.remove('hidden');
       fileInfoBox.classList.add('hidden');
@@ -721,6 +907,7 @@
       comparePreviewBtn.disabled = true;
       previewPageSelect.disabled = true;
       resultSummaryBox.classList.add('hidden');
+      setDownloadEnabled(false);
       origSizeMetric.textContent = '-';
       estSizeMetric.textContent = '-';
       estRatioSub.textContent = '조건 변경 시 자동 계산';
@@ -737,6 +924,7 @@
 
       currentFile = file;
       currentBuffer = await file.arrayBuffer();
+      resetMeasuredEstimate();
 
       uploadPrompt.classList.add('hidden');
       fileInfoBox.classList.remove('hidden');
@@ -749,6 +937,7 @@
       compSizeMetric.textContent = '-';
       compRatioSub.textContent = '실행 후 확정';
       resultSummaryBox.classList.add('hidden');
+      setDownloadEnabled(false);
       compressBtn.disabled = false;
       comparePreviewBtn.disabled = false;
       previewPageSelect.disabled = false;
@@ -805,6 +994,7 @@
 
         updateEngineOptionStates();
         updateRealTimeEstimateUI();
+        scheduleMeasuredEstimate();
         setProgress(0, '압축 준비 완료');
       } catch (err) {
         filePagesText.textContent = '페이지 수 확인 불가';
@@ -818,85 +1008,100 @@
         };
         updateEngineOptionStates();
         updateRealTimeEstimateUI();
+        scheduleMeasuredEstimate();
         setProgress(0, '압축 준비 완료');
       }
     }
 
+    // 미리보기가 겹쳐 실행돼도 오류가 나지 않게 하는 장치
+    // - 실행할 때마다 번호를 올리고, 늦게 끝난 이전 실행의 결과는 버림
+    // - 화면의 캔버스에 직접 render 하지 않고 매번 새 캔버스에 그린 뒤 복사함
+    //   (같은 캔버스에 render 두 개가 동시에 걸리면 PDF.js가 오류를 냄)
+    let previewRunId = 0;
+    const compareBtnDefaultHtml = comparePreviewBtn.innerHTML;
+
+    async function renderPageToNewCanvas(page, viewport) {
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(32, Math.floor(viewport.width));
+      canvas.height = Math.max(32, Math.floor(viewport.height));
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      return canvas;
+    }
+
+    function copyToCanvas(target, source) {
+      target.width = source.width;
+      target.height = source.height;
+      target.getContext('2d').drawImage(source, 0, 0);
+    }
+
     async function renderSideBySidePreview() {
       if (!currentBuffer) return;
+      const runId = ++previewRunId;
+      const isStale = () => runId !== previewRunId;
 
       const selectedPageNum = parseInt(previewPageSelect.value, 10) || 1;
       const opts = getCurrentOptions();
 
       comparePreviewBtn.disabled = true;
-      const origBtnHtml = comparePreviewBtn.innerHTML;
       comparePreviewBtn.innerHTML = `<span>렌더링 중...</span>`;
 
+      let pdf = null;
       try {
-        const loadingTask = pdfjsLib.getDocument({ data: currentBuffer.slice(0) });
-        const pdf = await loadingTask.promise;
+        pdf = await pdfjsLib.getDocument({ data: currentBuffer.slice(0), ...PDFJS_OPTS }).promise;
         const page = await pdf.getPage(selectedPageNum);
 
         const baseDisplayScale = 1.25 * currentZoom;
         const origViewport = page.getViewport({ scale: baseDisplayScale });
+        const origCanvas = await renderPageToNewCanvas(page, origViewport);
+        if (isStale()) return;
 
-        origPreviewCanvas.width = Math.floor(origViewport.width);
-        origPreviewCanvas.height = Math.floor(origViewport.height);
-        const origCtx = origPreviewCanvas.getContext('2d');
-        origCtx.fillStyle = '#FFFFFF';
-        origCtx.fillRect(0, 0, origPreviewCanvas.width, origPreviewCanvas.height);
-
-        await page.render({ canvasContext: origCtx, viewport: origViewport }).promise;
-
-        const singleOrigDoc = await PDFLib.PDFDocument.load(currentBuffer.slice(0), { ignoreEncryption: true });
-        const singleCleanDoc = await PDFLib.PDFDocument.create();
-        const [copiedSinglePage] = await singleCleanDoc.copyPages(singleOrigDoc, [selectedPageNum - 1]);
-        singleCleanDoc.addPage(copiedSinglePage);
-        const singleOrigBytes = await singleCleanDoc.save({ useObjectStreams: false });
-
-        const dpiScaleRatioMap = { 72: 0.55, 150: 1.0, 220: 1.45 };
-        const effectiveRenderScale = (dpiScaleRatioMap[opts.dpi] || 1.0) * currentZoom;
-        const lowResViewport = page.getViewport({ scale: effectiveRenderScale });
-
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = Math.max(32, Math.floor(lowResViewport.width));
-        tempCanvas.height = Math.max(32, Math.floor(lowResViewport.height));
-        const tempCtx = tempCanvas.getContext('2d');
-        tempCtx.fillStyle = '#FFFFFF';
-        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-
-        await page.render({ canvasContext: tempCtx, viewport: lowResViewport }).promise;
-
-        const effectiveQuality = opts.mode === 'DEEP_GS_WASM'
-          ? Math.min(0.95, opts.quality + 0.05)
-          : opts.quality;
-
-        const compressedDataUrl = tempCanvas.toDataURL('image/jpeg', effectiveQuality);
-
-        const base64Data = compressedDataUrl.split(',')[1];
-        const compSingleImgBytes = Math.round((base64Data.length * 3) / 4);
-        if (singleOrigBytes.byteLength > 0) {
-          const sampleRatio = Math.min(1.0, Math.max(0.08, (compSingleImgBytes + 2048) / singleOrigBytes.byteLength));
-          pdfStats.measuredSampleRatio = sampleRatio;
+        // 압축본 미리보기: 실제 압축과 같은 방법으로 이 한 쪽만 압축해서 보여 준다.
+        let compSource;
+        if (opts.mode === 'EXTREME_RASTER') {
+          // 방식 3: 고른 DPI 그대로(배율 = DPI ÷ 72) 쪽 전체를 JPEG로 만든 뒤 화면 크기로 늘려 보여 줌
+          const rasterCanvas = await renderPageToNewCanvas(page, page.getViewport({ scale: opts.dpi / 72 }));
+          if (isStale()) return;
+          const compImg = new Image();
+          await new Promise((resolve, reject) => {
+            compImg.onload = resolve;
+            compImg.onerror = reject;
+            compImg.src = rasterCanvas.toDataURL('image/jpeg', opts.quality);
+          });
+          compSource = compImg;
+        } else {
+          // 방식 1·2: 이 쪽만 떼어 사진을 실제로 다시 압축한 PDF를 만들어 그대로 그림 (글자는 원본처럼 선명)
+          const singleOrigDoc = await PDFLib.PDFDocument.load(currentBuffer.slice(0), { ignoreEncryption: true });
+          const singleCleanDoc = await PDFLib.PDFDocument.create();
+          const [copiedSinglePage] = await singleCleanDoc.copyPages(singleOrigDoc, [selectedPageNum - 1]);
+          singleCleanDoc.addPage(copiedSinglePage);
+          await recompressDocImages(singleCleanDoc, opts);
+          const singleBytes = await singleCleanDoc.save({ useObjectStreams: true });
+          if (isStale()) return;
+          const singlePdf = await pdfjsLib.getDocument({ data: singleBytes, ...PDFJS_OPTS }).promise;
+          try {
+            const singlePage = await singlePdf.getPage(1);
+            compSource = await renderPageToNewCanvas(singlePage, singlePage.getViewport({ scale: baseDisplayScale }));
+          } finally {
+            singlePdf.destroy();
+          }
         }
+        if (isStale()) return;
 
-        const compImg = new Image();
-        await new Promise((resolve, reject) => {
-          compImg.onload = resolve;
-          compImg.onerror = reject;
-          compImg.src = compressedDataUrl;
-        });
-
+        // 가장 마지막 실행만 화면에 반영
+        copyToCanvas(origPreviewCanvas, origCanvas);
         compPreviewCanvas.width = origPreviewCanvas.width;
         compPreviewCanvas.height = origPreviewCanvas.height;
         const compCtx = compPreviewCanvas.getContext('2d');
         compCtx.fillStyle = '#FFFFFF';
         compCtx.fillRect(0, 0, compPreviewCanvas.width, compPreviewCanvas.height);
         compCtx.imageSmoothingEnabled = true;
-        compCtx.drawImage(compImg, 0, 0, compPreviewCanvas.width, compPreviewCanvas.height);
+        compCtx.drawImage(compSource, 0, 0, compPreviewCanvas.width, compPreviewCanvas.height);
 
         updateRealTimeEstimateUI();
-        const estTotalBytes = calculateEstimatedSizeBytes();
+        const estTotalBytes = getBestEstimate().bytes;
         const origTotalBytes = currentBuffer.byteLength;
         const savedPct = origTotalBytes > 0
           ? Math.max(0, ((origTotalBytes - estTotalBytes) / origTotalBytes) * 100).toFixed(1)
@@ -908,11 +1113,14 @@
         origPageBadge.textContent = `${selectedPageNum} 페이지 원본`;
         compPageBadge.textContent = `${selectedPageNum} 페이지 미리보기 (${opts.dpi} DPI · 품질 ${Math.round(opts.quality * 100)}%)`;
       } catch (err) {
-        console.error(err);
+        if (!isStale()) console.error(err);
       } finally {
-        comparePreviewBtn.disabled = false;
-        comparePreviewBtn.innerHTML = origBtnHtml;
-        lucide.createIcons();
+        if (pdf) pdf.destroy();
+        if (!isStale()) {
+          comparePreviewBtn.disabled = false;
+          comparePreviewBtn.innerHTML = compareBtnDefaultHtml;
+          lucide.createIcons();
+        }
       }
     }
 
@@ -941,6 +1149,155 @@
       return { outBytes, width: targetW, height: targetH };
     }
 
+    // ===== 사진의 실제 해상도 파악 =====
+    // 쪽의 그리기 명령을 읽어 사진마다 쪽 위에 몇 pt 크기로 놓였는지 찾는다(1pt = 1/72인치).
+    // 놓인 크기(인치) × 목표 DPI = 필요한 픽셀 수. 사진 픽셀이 그보다 많을 때만 그만큼 줄인다.
+    const PN = (n) => PDFLib.PDFName.of(n);
+    const IDENTITY = [1, 0, 0, 1, 0, 0];
+    function mulMatrix(m, n) {
+      return [m[0] * n[0] + m[1] * n[2], m[0] * n[1] + m[1] * n[3],
+              m[2] * n[0] + m[3] * n[2], m[2] * n[1] + m[3] * n[3],
+              m[4] * n[0] + m[5] * n[2] + n[4], m[4] * n[1] + m[5] * n[3] + n[5]];
+    }
+    function decodeContents(ctx, contents) {
+      const parts = [];
+      const add = (o) => {
+        o = ctx.lookup(o);
+        if (o instanceof PDFLib.PDFRawStream) { try { parts.push(PDFLib.decodePDFRawStream(o).decode()); } catch (e) {} }
+      };
+      if (contents instanceof PDFLib.PDFArray) contents.asArray().forEach(add); else if (contents) add(contents);
+      const out = new Uint8Array(parts.reduce((a, b) => a + b.length + 1, 0));
+      let pos = 0;
+      for (const part of parts) { out.set(part, pos); pos += part.length; out[pos++] = 10; }
+      return out;
+    }
+    // 그리기 명령을 낱말 단위로 읽어 연산자(q, Q, cm, Do 등)마다 onOp를 부른다. 문자열·인라인 이미지는 건너뜀.
+    function scanContent(b, onOp) {
+      const n = b.length, stack = [];
+      const ws = (c) => c === 0 || c === 9 || c === 10 || c === 12 || c === 13 || c === 32;
+      const delim = (c) => c === 40 || c === 41 || c === 60 || c === 62 || c === 91 || c === 93 || c === 123 || c === 125 || c === 47 || c === 37;
+      const text = (s0, e0) => { let t = ''; for (let k = s0; k < e0; k++) t += String.fromCharCode(b[k]); return t; };
+      let i = 0;
+      while (i < n) {
+        const c = b[i];
+        if (ws(c)) { i++; continue; }
+        if (c === 37) { while (i < n && b[i] !== 10 && b[i] !== 13) i++; continue; }
+        if (c === 40) { let depth = 1; i++; while (i < n && depth) { if (b[i] === 92) i += 2; else { if (b[i] === 40) depth++; else if (b[i] === 41) depth--; i++; } } stack.push(null); continue; }
+        if (c === 60) { if (b[i + 1] === 60) { i += 2; continue; } while (i < n && b[i] !== 62) i++; i++; stack.push(null); continue; }
+        if (c === 62 || c === 91 || c === 93 || c === 123 || c === 125) { i++; continue; }
+        if (c === 47) { let j = i + 1; while (j < n && !ws(b[j]) && !delim(b[j])) j++; stack.push({ name: text(i + 1, j) }); i = j; continue; }
+        let j = i; while (j < n && !ws(b[j]) && !delim(b[j])) j++;
+        if (j === i) { i++; continue; }
+        const tok = text(i, j); i = j;
+        if (/^[+\-]?(\d+\.?\d*|\.\d+)$/.test(tok)) { stack.push(Number(tok)); continue; }
+        if (tok === 'BI') {
+          let k = i;
+          while (k < n - 2 && !(b[k] === 73 && b[k + 1] === 68 && ws(b[k - 1]) && ws(b[k + 2]))) k++;
+          k += 3;
+          while (k < n - 1 && !(ws(b[k - 1]) && b[k] === 69 && b[k + 1] === 73 && (k + 2 >= n || ws(b[k + 2])))) k++;
+          i = k + 2; stack.length = 0; continue;
+        }
+        onOp(tok, stack);
+        stack.length = 0;
+      }
+    }
+    // 사진(ref.tag)마다 가장 크게 놓인 크기 {w, h}(pt). 사진의 가로축·세로축 방향 길이라 회전돼 있어도 맞음.
+    function collectImagePlacements(pdfDoc) {
+      const ctx = pdfDoc.context, result = new Map();
+      const walk = (bytes, resources, startCtm, depth) => {
+        let ctm = startCtm; const saved = [];
+        const xobjects = resources instanceof PDFLib.PDFDict ? resources.lookup(PN('XObject')) : null;
+        scanContent(bytes, (op, st) => {
+          if (op === 'q') saved.push(ctm);
+          else if (op === 'Q') { if (saved.length) ctm = saved.pop(); }
+          else if (op === 'cm') { const m = st.slice(-6); if (m.length === 6 && m.every(x => typeof x === 'number')) ctm = mulMatrix(m, ctm); }
+          else if (op === 'Do' && xobjects instanceof PDFLib.PDFDict) {
+            const last = st[st.length - 1];
+            if (!last || !last.name) return;
+            const nm = last.name.replace(/#([0-9a-fA-F]{2})/g, (_, h) => String.fromCharCode(parseInt(h, 16)));
+            const ref = xobjects.get(PN(nm));
+            const xo = ctx.lookup(ref);
+            if (!(xo instanceof PDFLib.PDFRawStream)) return;
+            const sub = xo.dict.lookup(PN('Subtype'));
+            if (sub === PN('Image') && ref instanceof PDFLib.PDFRef) {
+              const w = Math.hypot(ctm[0], ctm[1]), h = Math.hypot(ctm[2], ctm[3]);
+              const prev = result.get(ref.tag);
+              if (!prev || w * h > prev.w * prev.h) result.set(ref.tag, { w, h }); // 여러 번 쓰이면 크게 놓인 쪽 기준(화질 보호)
+            } else if (sub === PN('Form') && depth < 8) {
+              const mtx = xo.dict.lookup(PN('Matrix'));
+              const m = mtx instanceof PDFLib.PDFArray && mtx.size() === 6
+                ? mtx.asArray().map(x => { const v = ctx.lookup(x); return v instanceof PDFLib.PDFNumber ? v.asNumber() : 0; })
+                : IDENTITY;
+              const res = xo.dict.lookup(PN('Resources'));
+              try { walk(PDFLib.decodePDFRawStream(xo).decode(), res instanceof PDFLib.PDFDict ? res : resources, mulMatrix(m, ctm), depth + 1); } catch (e) {}
+            }
+          }
+        });
+      };
+      for (const page of pdfDoc.getPages()) {
+        try { walk(decodeContents(ctx, page.node.Contents()), page.node.Resources(), IDENTITY, 0); } catch (e) {}
+      }
+      return result;
+    }
+    function maxPageSidePt(pdfDoc) {
+      let m = 0;
+      for (const pg of pdfDoc.getPages()) { const { width, height } = pg.getSize(); m = Math.max(m, width, height); }
+      return m || 842;
+    }
+    // 줄일 비율: 놓인 크기를 아는 사진은 '놓인 크기 × 목표 DPI', 모르는 사진(주석 속 그림 등)은 쪽 크기 × 목표 DPI를 상한으로.
+    // 이미 목표보다 해상도가 낮으면 1(크기 그대로, 화질만 다시 저장).
+    function scaleForTargetDpi(W, H, place, dpi, maxSidePt) {
+      if (!W || !H) return 1;
+      if (place && place.w > 0.5 && place.h > 0.5) {
+        return Math.min(1, Math.max((place.w / 72 * dpi) / W, (place.h / 72 * dpi) / H));
+      }
+      return Math.min(1, (maxSidePt / 72 * dpi) / Math.max(W, H));
+    }
+    function imageInfoOf(obj) {
+      const d = obj.dict, num = (k) => { const v = d.lookup(PN(k)); return v instanceof PDFLib.PDFNumber ? v.asNumber() : 0; };
+      const filter = d.get(PN('Filter'));
+      const fn = filter ? filter.toString() : '';
+      const eligible = (fn.includes('DCTDecode') || fn.includes('JPXDecode')) && obj.contents && obj.contents.length > 4096
+        && !(d.lookup(PN('Mask')) instanceof PDFLib.PDFArray);
+      return { W: num('Width'), H: num('Height'), eligible };
+    }
+    // 방식 1의 사진 재압축(실제 압축과 미리보기가 함께 씀)
+    async function recompressDocImages(pdfDoc, options, onProgress) {
+      const placements = collectImagePlacements(pdfDoc);
+      const maxSide = maxPageSidePt(pdfDoc);
+      const targets = [];
+      for (const [ref, obj] of pdfDoc.context.enumerateIndirectObjects()) {
+        if (!(obj instanceof PDFLib.PDFRawStream) || !obj.dict) continue;
+        const subtype = obj.dict.get(PN('Subtype'));
+        if (!subtype || subtype.toString() !== '/Image') continue;
+        const info = imageInfoOf(obj);
+        if (info.eligible) targets.push([ref, obj, info]);
+      }
+      let done = 0, resized = 0;
+      for (const [ref, obj, info] of targets) {
+        try {
+          const scale = scaleForTargetDpi(info.W, info.H, placements.get(ref.tag), options.dpi, maxSide);
+          const origBytes = obj.contents;
+          const { outBytes, width, height } = await recompressImageBytes(origBytes, options.quality, scale);
+          if (outBytes.length < origBytes.length) {
+            obj.contents = outBytes;
+            obj.dict.set(PN('Width'), PDFLib.PDFNumber.of(width));
+            obj.dict.set(PN('Height'), PDFLib.PDFNumber.of(height));
+            obj.dict.set(PN('Filter'), PN('DCTDecode'));
+            obj.dict.set(PN('ColorSpace'), PN('DeviceRGB'));
+            obj.dict.set(PN('BitsPerComponent'), PDFLib.PDFNumber.of(8));
+            obj.dict.set(PN('Length'), PDFLib.PDFNumber.of(outBytes.length));
+            obj.dict.delete(PN('Decode'));      // CMYK용 반전 배열이 남으면 색이 뒤집힘
+            obj.dict.delete(PN('DecodeParms'));
+            if (scale < 0.999) resized++;
+          }
+        } catch (imgErr) {}
+        done++;
+        if (onProgress) onProgress(done, targets.length);
+      }
+      return { total: targets.length, resized, located: targets.filter(([ref]) => placements.has(ref.tag)).length };
+    }
+
     async function runEngine1PdfLib(buffer, options) {
       setProgress(15, 'PDF 객체 트리 파싱 중...');
       const pdfDoc = await PDFLib.PDFDocument.load(buffer, { ignoreEncryption: true });
@@ -952,36 +1309,9 @@
       pdfDoc.setProducer('');
       pdfDoc.setCreator('');
 
-      const scaleMap = { '72': 0.5, '150': 0.75, '220': 0.9 };
-      const scaleRatio = scaleMap[String(options.dpi)] || 0.75;
-
-      const enumerated = pdfDoc.context.enumerateIndirectObjects();
-      for (const [, obj] of enumerated) {
-        if (obj instanceof PDFLib.PDFRawStream && obj.dict) {
-          const subtype = obj.dict.get(PDFLib.PDFName.of('Subtype'));
-          if (subtype && subtype.toString() === '/Image') {
-            const filter = obj.dict.get(PDFLib.PDFName.of('Filter'));
-            const filterName = filter ? filter.toString() : '';
-            if (filterName.includes('DCTDecode') || filterName.includes('JPXDecode')) {
-              try {
-                const origBytes = obj.contents;
-                if (origBytes && origBytes.length > 4096) {
-                  const { outBytes, width, height } = await recompressImageBytes(origBytes, options.quality, scaleRatio);
-                  if (outBytes.length < origBytes.length) {
-                    obj.contents = outBytes;
-                    obj.dict.set(PDFLib.PDFName.of('Width'), PDFLib.PDFNumber.of(width));
-                    obj.dict.set(PDFLib.PDFName.of('Height'), PDFLib.PDFNumber.of(height));
-                    obj.dict.set(PDFLib.PDFName.of('Filter'), PDFLib.PDFName.of('DCTDecode'));
-                    obj.dict.set(PDFLib.PDFName.of('ColorSpace'), PDFLib.PDFName.of('DeviceRGB'));
-                    obj.dict.set(PDFLib.PDFName.of('BitsPerComponent'), PDFLib.PDFNumber.of(8));
-                    obj.dict.set(PDFLib.PDFName.of('Length'), PDFLib.PDFNumber.of(outBytes.length));
-                  }
-                }
-              } catch (imgErr) {}
-            }
-          }
-        }
-      }
+      await recompressDocImages(pdfDoc, options, (done, total) => {
+        setProgress(15 + Math.round(done / Math.max(1, total) * 50), `사진 해상도 맞추는 중 (${done} / ${total})...`);
+      });
 
       setProgress(65, '페이지 트리 재구성 중...');
       const cleanDoc = await PDFLib.PDFDocument.create();
@@ -998,7 +1328,7 @@
 
     async function runEngine2GhostscriptWasm(buffer, options) {
       setProgress(15, 'WASM 엔진 불러오는 중...');
-      const pdfSettingsMap = { '72': '/screen', '150': '/ebook', '220': '/printer' };
+      const pdfSettingsMap = { '72': '/screen', '150': '/ebook', '220': '/printer', '300': '/printer' };
       const gsPreset = pdfSettingsMap[String(options.dpi)] || '/ebook';
 
       try {
@@ -1015,6 +1345,9 @@
             '-sDEVICE=pdfwrite',
             '-dCompatibilityLevel=1.5',
             `-dPDFSETTINGS=${gsPreset}`,
+            // 프리셋의 기본 해상도(/screen 72, /ebook 150, /printer 300) 대신 고른 DPI를 그대로 적용
+            '-dDownsampleColorImages=true', '-dDownsampleGrayImages=true', '-dDownsampleMonoImages=true',
+            `-dColorImageResolution=${options.dpi}`, `-dGrayImageResolution=${options.dpi}`, `-dMonoImageResolution=${Math.max(options.dpi, 300)}`,
             '-dNOPAUSE',
             '-dQUIET',
             '-dBATCH',
@@ -1035,13 +1368,12 @@
 
     async function runEngine3Rasterize(buffer, options) {
       setProgress(10, 'PDF.js 렌더러 초기화 중...');
-      const loadingTask = pdfjsLib.getDocument({ data: buffer.slice(0) });
+      const loadingTask = pdfjsLib.getDocument({ data: buffer.slice(0), ...PDFJS_OPTS });
       const pdf = await loadingTask.promise;
       const numPages = pdf.numPages;
 
       const newPdfDoc = await PDFLib.PDFDocument.create();
-      const dpiScaleMap = { '72': 1.0, '150': 1.5, '220': 2.0 };
-      const renderScale = dpiScaleMap[String(options.dpi)] || 1.5;
+      const renderScale = options.dpi / 72; // PDF.js 배율 1 = 72dpi
 
       for (let pageNum = 1; pageNum <= numPages; pageNum++) {
         const pct = 15 + Math.round((pageNum / numPages) * 75);
@@ -1076,6 +1408,7 @@
 
       compressBtn.disabled = true;
       resultSummaryBox.classList.add('hidden');
+      setDownloadEnabled(false);
       fileStatusBadge.textContent = '압축 진행 중...';
 
       const options = getCurrentOptions();
@@ -1121,6 +1454,7 @@
 
         savedBadgeText.textContent = diff > 0 ? `${ratio}% 감소 (-${formatBytes(diff)})` : `0% (이미 최적화됨)`;
         resultSummaryBox.classList.remove('hidden');
+        setDownloadEnabled(true);
       } catch (err) {
         console.error(err);
         setProgress(0, '오류 발생');
