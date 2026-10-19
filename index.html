@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF 다이어트 스튜디오 Pro</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- pdf-lib CDN -->
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <!-- PDF.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+    .drag-active {
+      border-color: #4f46e5 !important;
+      background-color: #eef2ff !important;
+    }
+    .preview-scroll::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    .preview-scroll::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 6px;
+    }
+    .preview-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 6px;
+    }
+    .preview-scroll::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-20">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm">
+          <i data-lucide="file-down" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900">PDF 다이어트 스튜디오 Pro</h1>
+          <p class="text-xs text-slate-500">파일 서버 전송 없이 이 브라우저에서만 작동하는 PDF 압축 프로그램!</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 text-xs font-semibold bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full border border-indigo-200">
+        <i data-lucide="code" class="w-4 h-4"></i>
+        <span>Made By H.S.Park</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto w-full px-6 py-8 flex-1 space-y-8">
+    
+    <!-- Top Grid: Left Column (Upload, Engine, Comparison) & Right Column (Options, Results) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left Column: Upload, Engine Selection, and Comparison Preview Card (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <!-- Step 1: Upload Box -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs flex items-center justify-center font-bold">1</span>
+              PDF 파일 선택
+            </h2>
+            <span id="fileStatusBadge" class="hidden text-xs px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 font-medium">대기 중</span>
+          </div>
+
+          <div id="dropZone" class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center transition-all cursor-pointer hover:border-indigo-500 hover:bg-slate-50/80">
+            <input type="file" id="fileInput" accept="application/pdf" class="hidden" />
+            <div id="uploadPrompt" class="space-y-3">
+              <div class="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto">
+                <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-slate-700">클릭하여 PDF를 선택하거나 이곳에 끌어다 놓으세요</p>
+                <p class="text-xs text-slate-400 mt-1">파일을 올리면 실시간 예상 용량과 화질 비교 기능을 바로 활용할 수 있습니다</p>
+              </div>
+            </div>
+
+            <div id="fileInfoBox" class="hidden text-left bg-slate-50 p-4 rounded-xl border border-slate-200 flex items-center justify-between">
+              <div class="flex items-center gap-3 overflow-hidden">
+                <div class="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                  <i data-lucide="file-text" class="w-5 h-5"></i>
+                </div>
+                <div class="truncate">
+                  <p id="fileNameText" class="text-sm font-bold text-slate-800 truncate">sample.pdf</p>
+                  <div class="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
+                    <span id="fileSizeText">0 MB</span>
+                    <span>•</span>
+                    <span id="filePagesText">페이지 분석 중...</span>
+                  </div>
+                </div>
+              </div>
+              <button id="removeFileBtn" type="button" class="text-slate-400 hover:text-red-500 p-1.5 rounded-lg hover:bg-white transition" title="파일 변경">
+                <i data-lucide="x" class="w-5 h-5"></i>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 2: Compression Mode Selection -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs flex items-center justify-center font-bold">2</span>
+              압축 엔진 선택 (3가지 방식)
+            </h2>
+            <span id="recommendBadge" class="hidden text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-full"></span>
+          </div>
+
+          <div class="space-y-3" id="engineSelector">
+            <!-- Mode 1: pdf-lib XObject & Object Stream -->
+            <label class="block cursor-pointer">
+              <input type="radio" name="engineMode" value="FAST_PDFLIB" class="peer sr-only" checked />
+              <div class="p-4 rounded-xl border-2 border-slate-200 peer-checked:border-indigo-600 peer-checked:bg-indigo-50/40 transition hover:bg-slate-50">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-center gap-2.5">
+                    <span class="text-lg">⚡</span>
+                    <div>
+                      <p class="text-sm font-bold text-slate-900">방식 1. 빠른 구조·이미지 재압축 (pdf-lib 엔진)</p>
+                      <p class="text-xs text-slate-500 mt-0.5">내부 이미지(XObject)만 추출해 재압축하고 메타데이터 및 객체 스트림을 정리합니다.</p>
+                    </div>
+                  </div>
+                  <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 shrink-0">텍스트 유지</span>
+                </div>
+              </div>
+            </label>
+
+            <!-- Mode 2: Ghostscript WASM -->
+            <label class="block cursor-pointer">
+              <input type="radio" name="engineMode" value="DEEP_GS_WASM" class="peer sr-only" />
+              <div class="p-4 rounded-xl border-2 border-slate-200 peer-checked:border-indigo-600 peer-checked:bg-indigo-50/40 transition hover:bg-slate-50">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-center gap-2.5">
+                    <span class="text-lg">💎</span>
+                    <div>
+                      <p class="text-sm font-bold text-slate-900">방식 2. 정밀 Ghostscript WASM 압축 (고급)</p>
+                      <p class="text-xs text-slate-500 mt-0.5">WebAssembly 엔진을 통해 폰트 서브셋팅과 정밀 리샘플링을 수행합니다.</p>
+                    </div>
+                  </div>
+                  <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 shrink-0">폰트+구조 최적화</span>
+                </div>
+              </div>
+            </label>
+
+            <!-- Mode 3: PDF.js Rasterization -->
+            <label class="block cursor-pointer">
+              <input type="radio" name="engineMode" value="EXTREME_RASTER" class="peer sr-only" />
+              <div class="p-4 rounded-xl border-2 border-slate-200 peer-checked:border-indigo-600 peer-checked:bg-indigo-50/40 transition hover:bg-slate-50">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-center gap-2.5">
+                    <span class="text-lg">🔒</span>
+                    <div>
+                      <p class="text-sm font-bold text-slate-900">방식 3. 페이지 전체 이미지화 (PDF.js 래스터화)</p>
+                      <p class="text-xs text-slate-500 mt-0.5">모든 페이지를 캔버스에 그린 뒤 압축된 이미지 PDF로 재결합합니다.</p>
+                    </div>
+                  </div>
+                  <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-amber-100 text-amber-800 shrink-0">통이미지 변환</span>
+                </div>
+              </div>
+            </label>
+          </div>
+
+          <!-- Warning banner for Mode 3 -->
+          <div id="rasterWarning" class="hidden mt-3 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-start gap-2">
+            <i data-lucide="alert-triangle" class="w-4 h-4 shrink-0 mt-0.5 text-amber-600"></i>
+            <div>
+              <strong>주의:</strong> 페이지 전체 이미지화 모드를 사용하면 결과 PDF에서 <strong>텍스트 드래그(복사) 및 검색이 불가능</strong>해집니다.
+            </div>
+          </div>
+        </section>
+
+        <!-- Moved Here: Original vs Compressed Side-by-Side Quality Preview Controller Card -->
+        <section class="bg-indigo-950 text-white rounded-2xl p-6 shadow-sm border border-indigo-900 space-y-4">
+          <div>
+            <h3 class="text-sm font-bold flex items-center gap-1.5">
+              <i data-lucide="split-square-horizontal" class="w-4 h-4 text-indigo-300"></i>
+              원본 · 압축본 화질 비교 미리보기
+            </h3>
+            <p class="text-xs text-indigo-200 mt-1 leading-relaxed">
+              선택한 1개 페이지를 현재 설정으로 빠르게 압축하여 원본과 압축본의 화질을 나란히 비교합니다.
+            </p>
+          </div>
+
+          <!-- Page selector & Preview Trigger -->
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 pt-1">
+            <div class="flex items-center gap-2 bg-indigo-950/80 border border-indigo-700/80 rounded-xl px-3 py-2 shrink-0">
+              <label for="previewPageSelect" class="text-xs text-indigo-200 font-medium whitespace-nowrap">비교 페이지:</label>
+              <select id="previewPageSelect" disabled class="bg-transparent text-white text-xs font-bold focus:outline-none cursor-pointer disabled:opacity-50">
+                <option value="1" class="text-slate-900">1 페이지 (기본)</option>
+              </select>
+            </div>
+
+            <button id="comparePreviewBtn" type="button" disabled class="flex-1 py-2.5 px-4 rounded-xl bg-indigo-500 hover:bg-indigo-400 disabled:bg-indigo-900/60 disabled:text-indigo-400 disabled:cursor-not-allowed text-white font-semibold text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+              <i data-lucide="eye" class="w-4 h-4"></i>
+              <span>비교 미리보기 실행</span>
+            </button>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- Right Column: Fine-Tuning Options & Results Card (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        
+        <!-- Step 3: Fine-tuning Options (Moved to Right Column) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs flex items-center justify-center font-bold">3</span>
+              세부 압축 옵션 설정
+            </h2>
+            <span id="engineRuleNotice" class="text-[10px] font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">선택한 엔진 연동 설정 활성화</span>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Image Quality Slider -->
+            <div id="qualityWrapper" class="bg-slate-50 p-4 rounded-xl border border-slate-200 transition-all">
+              <div class="flex justify-between items-center mb-2">
+                <label for="qualityInput" class="text-xs font-bold text-slate-700">JPEG 이미지 품질</label>
+                <span id="qualityValueLabel" class="text-xs font-bold text-indigo-600">70% (권장)</span>
+              </div>
+              <input id="qualityInput" type="range" min="20" max="95" step="5" value="70" class="w-full accent-indigo-600 cursor-pointer" />
+              <div class="flex justify-between text-[11px] text-slate-400 mt-1">
+                <span>최대 압축 (20%)</span>
+                <span>고화질 (95%)</span>
+              </div>
+            </div>
+
+            <!-- Target DPI / Scale Select -->
+            <div id="dpiWrapper" class="bg-slate-50 p-4 rounded-xl border border-slate-200 transition-all">
+              <div class="flex justify-between items-center mb-2">
+                <label for="dpiInput" class="text-xs font-bold text-slate-700">목표 해상도 (DPI / 스케일)</label>
+                <span id="dpiValueLabel" class="text-xs font-bold text-indigo-600">150 DPI (웹/화면용)</span>
+              </div>
+              <select id="dpiInput" class="w-full mt-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:border-indigo-600">
+                <option value="72">72 DPI — 최소 용량 (모바일/열람용)</option>
+                <option value="150" selected>150 DPI — 표준 균형 (일반 문서 권장)</option>
+                <option value="220">220 DPI — 고화질 유지 (프린트 겸용)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Additional Checkboxes with Dynamic Dimming -->
+          <div class="mt-4 flex flex-col gap-2.5 pt-3 border-t border-slate-100 text-xs text-slate-600">
+            <label id="chkMetaLabel" class="flex items-center gap-2 cursor-pointer transition-opacity">
+              <input type="checkbox" id="stripMetaCheck" checked class="rounded text-indigo-600 focus:ring-indigo-500" />
+              <span>작성자/메타데이터(XMP) 제거</span>
+            </label>
+            <label id="chkObjLabel" class="flex items-center gap-2 cursor-pointer transition-opacity">
+              <input type="checkbox" id="objectStreamCheck" checked class="rounded text-indigo-600 focus:ring-indigo-500" />
+              <span>PDF 1.5+ 오브젝트 스트림 압축</span>
+            </label>
+            <label id="chkPreventLabel" class="flex items-center gap-2 cursor-pointer transition-opacity">
+              <input type="checkbox" id="preventLargerCheck" checked class="rounded text-indigo-600 focus:ring-indigo-500" />
+              <span>용량 역전 시 자동 보조 압축</span>
+            </label>
+          </div>
+
+          <!-- Action Button -->
+          <button id="compressBtn" disabled class="mt-6 w-full py-3.5 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
+            <i data-lucide="zap" class="w-4 h-4"></i>
+            <span>전체 페이지 PDF 용량 줄이기 실행</span>
+          </button>
+        </section>
+
+        <!-- Result & Real-Time Estimate Card -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-5">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="bar-chart-3" class="w-5 h-5 text-indigo-600"></i>
+              예상 용량 및 압축 결과
+            </h2>
+            <span class="text-[11px] font-semibold px-2.5 py-1 rounded bg-indigo-50 text-indigo-600 border border-indigo-200">실시간 예측</span>
+          </div>
+
+          <!-- Comparison Metrics (Original vs Estimated / Actual) -->
+          <div class="grid grid-cols-3 gap-2">
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
+              <p class="text-[10px] text-slate-400 font-medium">원본 용량</p>
+              <p id="origSizeMetric" class="text-sm font-extrabold text-slate-700 mt-1">-</p>
+            </div>
+            <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-200 text-center">
+              <p class="text-[10px] text-amber-700 font-semibold">예상 압축본</p>
+              <p id="estSizeMetric" class="text-sm font-extrabold text-amber-800 mt-1">-</p>
+              <p id="estRatioSub" class="text-[9px] text-amber-600 font-medium mt-0.5">조건 변경 시 즉시</p>
+            </div>
+            <div class="p-3 rounded-xl bg-indigo-50/60 border border-indigo-200 text-center">
+              <p class="text-[10px] text-indigo-600 font-medium">실제 압축결과</p>
+              <p id="compSizeMetric" class="text-sm font-extrabold text-indigo-700 mt-1">-</p>
+              <p id="compRatioSub" class="text-[9px] text-indigo-500 font-medium mt-0.5">실행 후 확정</p>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div>
+            <div class="flex justify-between text-xs font-medium text-slate-600 mb-1.5">
+              <span id="progressStatusText">파일을 업로드해 주세요</span>
+              <span id="progressPercentText">0%</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+              <div id="progressBar" class="h-full bg-indigo-600 transition-all duration-300 w-0"></div>
+            </div>
+          </div>
+
+          <!-- Savings Highlight Banner -->
+          <div id="resultSummaryBox" class="hidden p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <p class="text-xs font-semibold text-emerald-800">최종 절감된 용량</p>
+                <p id="savedBadgeText" class="text-lg font-black text-emerald-700 mt-0.5">0% 감소</p>
+              </div>
+              <a id="downloadLink" href="#" download="compressed.pdf" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm flex items-center gap-1.5 transition shrink-0">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                <span>압축 PDF 다운로드</span>
+              </a>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- Bottom Full-Width Section: Side-by-Side Comparison Viewer -->
+    <section id="comparisonViewerSection" class="hidden bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+      <div class="flex flex-wrap items-center justify-between gap-4 pb-4 mb-5 border-b border-slate-200">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
+            <i data-lucide="columns" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-slate-900">원본 vs 압축본 화질 나란히 비교</h2>
+            <p id="comparisonSubTitle" class="text-xs text-slate-500">선택한 페이지를 렌더링하여 글자 선명도와 이미지 화질 열화를 비교합니다</p>
+          </div>
+        </div>
+
+        <!-- Viewer Controls: Page Quick Change, Zoom, Close -->
+        <div class="flex flex-wrap items-center gap-3">
+          <label class="flex items-center gap-1.5 text-xs text-slate-600 cursor-pointer bg-slate-100 px-3 py-1.5 rounded-lg">
+            <input type="checkbox" id="syncScrollCheck" checked class="rounded text-indigo-600" />
+            <span>스크롤 동기화</span>
+          </label>
+
+          <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg text-xs font-semibold">
+            <button type="button" data-zoom="1" class="zoom-btn px-2.5 py-1 rounded-md bg-white text-indigo-600 shadow-sm">100%</button>
+            <button type="button" data-zoom="1.5" class="zoom-btn px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900">150%</button>
+            <button type="button" data-zoom="2" class="zoom-btn px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900">200% (확대)</button>
+          </div>
+
+          <button id="closeComparisonBtn" type="button" class="text-xs text-slate-500 hover:text-slate-800 px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 flex items-center gap-1">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            <span>닫기</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Side by Side Panes -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Left Pane: Original -->
+        <div class="flex flex-col rounded-xl border-2 border-slate-200 bg-slate-50 overflow-hidden">
+          <div class="px-4 py-3 bg-white border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+              <span id="origPreviewHeaderLabel" class="text-sm font-extrabold text-slate-800">원본 (0 MB)</span>
+            </div>
+            <span id="origPageBadge" class="text-[11px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">1 페이지 원본 화질</span>
+          </div>
+          <div id="origScrollContainer" class="preview-scroll overflow-auto h-[520px] p-4 flex items-start justify-center bg-slate-200/60">
+            <canvas id="origPreviewCanvas" class="bg-white shadow-md rounded"></canvas>
+          </div>
+        </div>
+
+        <!-- Right Pane: Compressed -->
+        <div class="flex flex-col rounded-xl border-2 border-indigo-300 bg-indigo-50/20 overflow-hidden">
+          <div class="px-4 py-3 bg-white border-b border-indigo-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+              <span id="compPreviewHeaderLabel" class="text-sm font-extrabold text-indigo-700">압축본 (예상 0 MB)</span>
+            </div>
+            <span id="compPageBadge" class="text-[11px] font-semibold text-indigo-700 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded">현재 설정 적용됨</span>
+          </div>
+          <div id="compScrollContainer" class="preview-scroll overflow-auto h-[520px] p-4 flex items-start justify-center bg-slate-200/60">
+            <canvas id="compPreviewCanvas" class="bg-white shadow-md rounded"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Configure PDF.js worker
+    if (window['pdfjsLib']) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    // Application State
+    let currentFile = null;
+    let currentBuffer = null;
+    let totalPages = 0;
+    let currentDownloadUrl = null;
+    let currentZoom = 1.0;
+
+    let pdfStats = {
+      totalBytes: 0,
+      imageStreamBytes: 0,
+      imageCount: 0,
+      otherStreamBytes: 0,
+      overheadBytes: 0,
+      measuredSampleRatio: null
+    };
+
+    // DOM Elements
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const uploadPrompt = document.getElementById('uploadPrompt');
+    const fileInfoBox = document.getElementById('fileInfoBox');
+    const fileNameText = document.getElementById('fileNameText');
+    const fileSizeText = document.getElementById('fileSizeText');
+    const filePagesText = document.getElementById('filePagesText');
+    const removeFileBtn = document.getElementById('removeFileBtn');
+    const fileStatusBadge = document.getElementById('fileStatusBadge');
+    const recommendBadge = document.getElementById('recommendBadge');
+    const rasterWarning = document.getElementById('rasterWarning');
+
+    const qualityInput = document.getElementById('qualityInput');
+    const qualityValueLabel = document.getElementById('qualityValueLabel');
+    const dpiInput = document.getElementById('dpiInput');
+    const dpiValueLabel = document.getElementById('dpiValueLabel');
+    const stripMetaCheck = document.getElementById('stripMetaCheck');
+    const objectStreamCheck = document.getElementById('objectStreamCheck');
+    const preventLargerCheck = document.getElementById('preventLargerCheck');
+
+    const qualityWrapper = document.getElementById('qualityWrapper');
+    const dpiWrapper = document.getElementById('dpiWrapper');
+    const chkMetaLabel = document.getElementById('chkMetaLabel');
+    const chkObjLabel = document.getElementById('chkObjLabel');
+    const chkPreventLabel = document.getElementById('chkPreventLabel');
+    const engineRuleNotice = document.getElementById('engineRuleNotice');
+
+    const compressBtn = document.getElementById('compressBtn');
+    const progressStatusText = document.getElementById('progressStatusText');
+    const progressPercentText = document.getElementById('progressPercentText');
+    const progressBar = document.getElementById('progressBar');
+    const origSizeMetric = document.getElementById('origSizeMetric');
+    const estSizeMetric = document.getElementById('estSizeMetric');
+    const estRatioSub = document.getElementById('estRatioSub');
+    const compSizeMetric = document.getElementById('compSizeMetric');
+    const compRatioSub = document.getElementById('compRatioSub');
+    const resultSummaryBox = document.getElementById('resultSummaryBox');
+    const savedBadgeText = document.getElementById('savedBadgeText');
+    const downloadLink = document.getElementById('downloadLink');
+
+    // Comparison Preview Elements
+    const previewPageSelect = document.getElementById('previewPageSelect');
+    const comparePreviewBtn = document.getElementById('comparePreviewBtn');
+    const comparisonViewerSection = document.getElementById('comparisonViewerSection');
+    const closeComparisonBtn = document.getElementById('closeComparisonBtn');
+    const origPreviewHeaderLabel = document.getElementById('origPreviewHeaderLabel');
+    const compPreviewHeaderLabel = document.getElementById('compPreviewHeaderLabel');
+    const origPageBadge = document.getElementById('origPageBadge');
+    const compPageBadge = document.getElementById('compPageBadge');
+    const origPreviewCanvas = document.getElementById('origPreviewCanvas');
+    const compPreviewCanvas = document.getElementById('compPreviewCanvas');
+    const origScrollContainer = document.getElementById('origScrollContainer');
+    const compScrollContainer = document.getElementById('compScrollContainer');
+    const syncScrollCheck = document.getElementById('syncScrollCheck');
+
+    // Utility: Format Bytes
+    function formatBytes(bytes) {
+      if (!bytes || bytes <= 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+    function setProgress(percent, status) {
+      const clamped = Math.max(0, Math.min(100, Math.round(percent)));
+      progressBar.style.width = `${clamped}%`;
+      progressPercentText.textContent = `${clamped}%`;
+      if (status) progressStatusText.textContent = status;
+    }
+
+    function getCurrentOptions() {
+      const selectedModeEl = document.querySelector('input[name="engineMode"]:checked');
+      return {
+        mode: selectedModeEl ? selectedModeEl.value : 'FAST_PDFLIB',
+        quality: parseInt(qualityInput.value, 10) / 100,
+        dpi: parseInt(dpiInput.value, 10),
+        stripMeta: stripMetaCheck.checked,
+        useObjectStreams: objectStreamCheck.checked,
+        preventLarger: preventLargerCheck.checked
+      };
+    }
+
+    // DYNAMIC ENGINE-BASED OPTION ENABLER / DISABLER
+    function updateEngineOptionStates() {
+      const mode = getCurrentOptions().mode;
+
+      if (mode === 'FAST_PDFLIB') {
+        setControlEnabled(qualityInput, qualityWrapper, true);
+        setControlEnabled(dpiInput, dpiWrapper, true);
+        setCheckboxEnabled(stripMetaCheck, chkMetaLabel, true);
+        setCheckboxEnabled(objectStreamCheck, chkObjLabel, true);
+        setCheckboxEnabled(preventLargerCheck, chkPreventLabel, true);
+        engineRuleNotice.textContent = '방식 1: 모든 최적화 옵션 활성화';
+      } else if (mode === 'DEEP_GS_WASM') {
+        setControlEnabled(qualityInput, qualityWrapper, true);
+        setControlEnabled(dpiInput, dpiWrapper, true);
+        setCheckboxEnabled(stripMetaCheck, chkMetaLabel, true);
+        setCheckboxEnabled(objectStreamCheck, chkObjLabel, false);
+        setCheckboxEnabled(preventLargerCheck, chkPreventLabel, true);
+        engineRuleNotice.textContent = '방식 2: 화질·DPI 프리셋 및 메타데이터 정리';
+      } else if (mode === 'EXTREME_RASTER') {
+        setControlEnabled(qualityInput, qualityWrapper, true);
+        setControlEnabled(dpiInput, dpiWrapper, true);
+        setCheckboxEnabled(stripMetaCheck, chkMetaLabel, false);
+        setCheckboxEnabled(objectStreamCheck, chkObjLabel, true);
+        setCheckboxEnabled(preventLargerCheck, chkPreventLabel, true);
+        engineRuleNotice.textContent = '방식 3: 이미지 변환 품질 및 DPI 리샘플링';
+      }
+    }
+
+    function setControlEnabled(inputEl, wrapperEl, enabled) {
+      inputEl.disabled = !enabled;
+      if (enabled) {
+        wrapperEl.classList.remove('opacity-40', 'bg-slate-100');
+        wrapperEl.classList.add('bg-slate-50');
+      } else {
+        wrapperEl.classList.add('opacity-40', 'bg-slate-100');
+        wrapperEl.classList.remove('bg-slate-50');
+      }
+    }
+
+    function setCheckboxEnabled(chkEl, labelEl, enabled) {
+      chkEl.disabled = !enabled;
+      if (enabled) {
+        labelEl.classList.remove('opacity-40', 'cursor-not-allowed');
+        labelEl.classList.add('cursor-pointer');
+      } else {
+        labelEl.classList.add('opacity-40', 'cursor-not-allowed');
+        labelEl.classList.remove('cursor-pointer');
+      }
+    }
+
+    // REAL-TIME ESTIMATED SIZE CALCULATOR
+    function calculateEstimatedSizeBytes() {
+      if (!currentBuffer || pdfStats.totalBytes === 0) return 0;
+
+      const opts = getCurrentOptions();
+      const total = pdfStats.totalBytes;
+      const imgBytes = pdfStats.imageStreamBytes;
+      const nonImgBytes = Math.max(0, total - imgBytes);
+
+      const dpiScaleMap = { 72: 0.28, 150: 0.56, 220: 0.82 };
+      const dpiFactor = dpiScaleMap[opts.dpi] || 0.56;
+      const qFactor = Math.pow(opts.quality, 1.55);
+
+      let estimated = total;
+
+      if (opts.mode === 'FAST_PDFLIB') {
+        if (imgBytes > 0) {
+          const compressedImg = imgBytes * Math.min(0.95, dpiFactor * qFactor * 1.35 + 0.08);
+          const overheadFactor = (opts.stripMeta ? 0.92 : 0.98) * (opts.useObjectStreams ? 0.90 : 1.0);
+          estimated = compressedImg + nonImgBytes * overheadFactor;
+        } else {
+          const structOnly = total * (opts.stripMeta ? 0.93 : 0.98) * (opts.useObjectStreams ? 0.90 : 1.0);
+          if (opts.preventLarger) {
+            const perPageRasterEst = totalPages * (opts.dpi === 72 ? 65000 : opts.dpi === 150 ? 145000 : 260000) * qFactor;
+            estimated = Math.min(structOnly, perPageRasterEst);
+          } else {
+            estimated = structOnly;
+          }
+        }
+      } else if (opts.mode === 'DEEP_GS_WASM') {
+        const compressedImg = imgBytes * Math.min(0.90, dpiFactor * qFactor * 1.15 + 0.06);
+        const compressedNonImg = nonImgBytes * (opts.dpi === 72 ? 0.48 : opts.dpi === 150 ? 0.62 : 0.78);
+        estimated = compressedImg + compressedNonImg;
+      } else if (opts.mode === 'EXTREME_RASTER') {
+        const basePageBytes = opts.dpi === 72 ? 75000 : opts.dpi === 150 ? 175000 : 320000;
+        const rasterEst = totalPages * basePageBytes * (0.35 + 0.85 * qFactor);
+        estimated = Math.min(total * dpiFactor * (0.4 + 0.7 * qFactor), rasterEst);
+      }
+
+      if (pdfStats.measuredSampleRatio !== null) {
+        estimated = estimated * 0.4 + (total * pdfStats.measuredSampleRatio) * 0.6;
+      }
+
+      if (opts.preventLarger) {
+        estimated = Math.min(total, estimated);
+      }
+
+      return Math.max(8192, Math.round(estimated));
+    }
+
+    function updateRealTimeEstimateUI() {
+      if (!currentBuffer || !currentFile) {
+        estSizeMetric.textContent = '-';
+        estRatioSub.textContent = '조건 변경 시 자동 계산';
+        return;
+      }
+
+      const origBytes = currentBuffer.byteLength;
+      const estBytes = calculateEstimatedSizeBytes();
+      const savedBytes = Math.max(0, origBytes - estBytes);
+      const savedPct = origBytes > 0 ? ((savedBytes / origBytes) * 100).toFixed(1) : '0.0';
+
+      estSizeMetric.textContent = `약 ${formatBytes(estBytes)}`;
+      estRatioSub.textContent = savedBytes > 0 ? `예상 -${savedPct}% 절감` : `이미 최적화됨`;
+
+      origPreviewHeaderLabel.textContent = `원본 (${formatBytes(origBytes)})`;
+      compPreviewHeaderLabel.textContent = `압축본 (예상 약 ${formatBytes(estBytes)} / -${savedPct}%)`;
+    }
+
+    function onOptionChanged() {
+      pdfStats.measuredSampleRatio = null;
+      updateRealTimeEstimateUI();
+      if (!comparisonViewerSection.classList.contains('hidden') && currentBuffer) {
+        renderSideBySidePreview();
+      }
+    }
+
+    // UI Listeners
+    qualityInput.addEventListener('input', () => {
+      const val = qualityInput.value;
+      let desc = '권장';
+      if (val < 50) desc = '고압축';
+      else if (val >= 85) desc = '고화질';
+      qualityValueLabel.textContent = `${val}% (${desc})`;
+      onOptionChanged();
+    });
+
+    dpiInput.addEventListener('change', () => {
+      const val = dpiInput.value;
+      const map = { '72': '72 DPI (모바일/최소)', '150': '150 DPI (웹/화면용)', '220': '220 DPI (인쇄 겸용)' };
+      dpiValueLabel.textContent = map[val] || `${val} DPI`;
+      onOptionChanged();
+    });
+
+    [stripMetaCheck, objectStreamCheck, preventLargerCheck].forEach(chk => {
+      chk.addEventListener('change', onOptionChanged);
+    });
+
+    document.querySelectorAll('input[name="engineMode"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.value === 'EXTREME_RASTER') {
+          rasterWarning.classList.remove('hidden');
+        } else {
+          rasterWarning.classList.add('hidden');
+        }
+        updateEngineOptionStates();
+        onOptionChanged();
+      });
+    });
+
+    // Synchronized Scroll
+    let isSyncingLeft = false;
+    let isSyncingRight = false;
+
+    origScrollContainer.addEventListener('scroll', () => {
+      if (!syncScrollCheck.checked || isSyncingLeft) {
+        isSyncingLeft = false;
+        return;
+      }
+      isSyncingRight = true;
+      compScrollContainer.scrollTop = origScrollContainer.scrollTop;
+      compScrollContainer.scrollLeft = origScrollContainer.scrollLeft;
+    });
+
+    compScrollContainer.addEventListener('scroll', () => {
+      if (!syncScrollCheck.checked || isSyncingRight) {
+        isSyncingRight = false;
+        return;
+      }
+      isSyncingLeft = true;
+      origScrollContainer.scrollTop = compScrollContainer.scrollTop;
+      origScrollContainer.scrollLeft = compScrollContainer.scrollLeft;
+    });
+
+    // Zoom Buttons
+    document.querySelectorAll('.zoom-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.zoom-btn').forEach(b => {
+          b.className = 'zoom-btn px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900';
+        });
+        btn.className = 'zoom-btn px-2.5 py-1 rounded-md bg-white text-indigo-600 shadow-sm';
+        currentZoom = parseFloat(btn.dataset.zoom) || 1.0;
+        if (currentBuffer && !comparisonViewerSection.classList.contains('hidden')) {
+          renderSideBySidePreview();
+        }
+      });
+    });
+
+    closeComparisonBtn.addEventListener('click', () => {
+      comparisonViewerSection.classList.add('hidden');
+    });
+
+    previewPageSelect.addEventListener('change', () => {
+      if (currentBuffer && !comparisonViewerSection.classList.contains('hidden')) {
+        renderSideBySidePreview();
+      }
+    });
+
+    comparePreviewBtn.addEventListener('click', async () => {
+      if (!currentBuffer) return;
+      comparisonViewerSection.classList.remove('hidden');
+      await renderSideBySidePreview();
+      comparisonViewerSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // Drag & Drop Upload
+    dropZone.addEventListener('click', (e) => {
+      if (e.target.closest('#removeFileBtn')) return;
+      fileInput.click();
+    });
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('drag-active');
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('drag-active');
+    });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-active');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handleFileSelect(e.dataTransfer.files[0]);
+      }
+    });
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        handleFileSelect(e.target.files[0]);
+      }
+    });
+
+    removeFileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      currentFile = null;
+      currentBuffer = null;
+      fileInput.value = '';
+      uploadPrompt.classList.remove('hidden');
+      fileInfoBox.classList.add('hidden');
+      fileStatusBadge.classList.add('hidden');
+      recommendBadge.classList.add('hidden');
+      comparisonViewerSection.classList.add('hidden');
+      compressBtn.disabled = true;
+      comparePreviewBtn.disabled = true;
+      previewPageSelect.disabled = true;
+      resultSummaryBox.classList.add('hidden');
+      origSizeMetric.textContent = '-';
+      estSizeMetric.textContent = '-';
+      estRatioSub.textContent = '조건 변경 시 자동 계산';
+      compSizeMetric.textContent = '-';
+      compRatioSub.textContent = '실행 후 확정';
+      setProgress(0, '파일을 업로드해 주세요');
+    });
+
+    async function handleFileSelect(file) {
+      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+        alert('PDF 파일만 업로드할 수 있습니다.');
+        return;
+      }
+
+      currentFile = file;
+      currentBuffer = await file.arrayBuffer();
+
+      uploadPrompt.classList.add('hidden');
+      fileInfoBox.classList.remove('hidden');
+      fileStatusBadge.classList.remove('hidden');
+      fileStatusBadge.textContent = '준비 완료';
+
+      fileNameText.textContent = file.name;
+      fileSizeText.textContent = formatBytes(file.size);
+      origSizeMetric.textContent = formatBytes(file.size);
+      compSizeMetric.textContent = '-';
+      compRatioSub.textContent = '실행 후 확정';
+      resultSummaryBox.classList.add('hidden');
+      compressBtn.disabled = false;
+      comparePreviewBtn.disabled = false;
+      previewPageSelect.disabled = false;
+
+      setProgress(0, '문서 구조 분석 중...');
+
+      try {
+        const pdfDoc = await PDFLib.PDFDocument.load(currentBuffer, { ignoreEncryption: true });
+        totalPages = pdfDoc.getPageCount();
+        filePagesText.textContent = `총 ${totalPages}페이지`;
+
+        previewPageSelect.innerHTML = '';
+        for (let i = 1; i <= totalPages; i++) {
+          const opt = document.createElement('option');
+          opt.value = String(i);
+          opt.className = 'text-slate-900';
+          opt.textContent = i === 1 ? `1 페이지 (기본)` : `${i} 페이지`;
+          previewPageSelect.appendChild(opt);
+        }
+
+        let imageCount = 0;
+        let imageStreamBytes = 0;
+        let otherStreamBytes = 0;
+
+        const enumerated = pdfDoc.context.enumerateIndirectObjects();
+        for (const [, obj] of enumerated) {
+          if (obj instanceof PDFLib.PDFRawStream && obj.dict) {
+            const len = obj.contents ? obj.contents.byteLength : 0;
+            const subtype = obj.dict.get(PDFLib.PDFName.of('Subtype'));
+            if (subtype && subtype.toString() === '/Image') {
+              imageCount++;
+              imageStreamBytes += len;
+            } else {
+              otherStreamBytes += len;
+            }
+          }
+        }
+
+        pdfStats = {
+          totalBytes: file.size,
+          imageStreamBytes,
+          imageCount,
+          otherStreamBytes,
+          overheadBytes: Math.max(0, file.size - imageStreamBytes - otherStreamBytes),
+          measuredSampleRatio: null
+        };
+
+        recommendBadge.classList.remove('hidden');
+        if (imageCount > 0) {
+          recommendBadge.textContent = `💡 내부 이미지 ${imageCount}개 감지 → 방식 1·2 추천`;
+        } else {
+          recommendBadge.textContent = `💡 텍스트 위주 문서 → 방식 2·3 추천`;
+        }
+
+        updateEngineOptionStates();
+        updateRealTimeEstimateUI();
+        setProgress(0, '압축 준비 완료');
+      } catch (err) {
+        filePagesText.textContent = '페이지 수 확인 불가';
+        pdfStats = {
+          totalBytes: file.size,
+          imageStreamBytes: Math.round(file.size * 0.7),
+          imageCount: 1,
+          otherStreamBytes: Math.round(file.size * 0.2),
+          overheadBytes: Math.round(file.size * 0.1),
+          measuredSampleRatio: null
+        };
+        updateEngineOptionStates();
+        updateRealTimeEstimateUI();
+        setProgress(0, '압축 준비 완료');
+      }
+    }
+
+    async function renderSideBySidePreview() {
+      if (!currentBuffer) return;
+
+      const selectedPageNum = parseInt(previewPageSelect.value, 10) || 1;
+      const opts = getCurrentOptions();
+
+      comparePreviewBtn.disabled = true;
+      const origBtnHtml = comparePreviewBtn.innerHTML;
+      comparePreviewBtn.innerHTML = `<span>렌더링 중...</span>`;
+
+      try {
+        const loadingTask = pdfjsLib.getDocument({ data: currentBuffer.slice(0) });
+        const pdf = await loadingTask.promise;
+        const page = await pdf.getPage(selectedPageNum);
+
+        const baseDisplayScale = 1.25 * currentZoom;
+        const origViewport = page.getViewport({ scale: baseDisplayScale });
+
+        origPreviewCanvas.width = Math.floor(origViewport.width);
+        origPreviewCanvas.height = Math.floor(origViewport.height);
+        const origCtx = origPreviewCanvas.getContext('2d');
+        origCtx.fillStyle = '#FFFFFF';
+        origCtx.fillRect(0, 0, origPreviewCanvas.width, origPreviewCanvas.height);
+
+        await page.render({ canvasContext: origCtx, viewport: origViewport }).promise;
+
+        const singleOrigDoc = await PDFLib.PDFDocument.load(currentBuffer.slice(0), { ignoreEncryption: true });
+        const singleCleanDoc = await PDFLib.PDFDocument.create();
+        const [copiedSinglePage] = await singleCleanDoc.copyPages(singleOrigDoc, [selectedPageNum - 1]);
+        singleCleanDoc.addPage(copiedSinglePage);
+        const singleOrigBytes = await singleCleanDoc.save({ useObjectStreams: false });
+
+        const dpiScaleRatioMap = { 72: 0.55, 150: 1.0, 220: 1.45 };
+        const effectiveRenderScale = (dpiScaleRatioMap[opts.dpi] || 1.0) * currentZoom;
+        const lowResViewport = page.getViewport({ scale: effectiveRenderScale });
+
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = Math.max(32, Math.floor(lowResViewport.width));
+        tempCanvas.height = Math.max(32, Math.floor(lowResViewport.height));
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCtx.fillStyle = '#FFFFFF';
+        tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+        await page.render({ canvasContext: tempCtx, viewport: lowResViewport }).promise;
+
+        const effectiveQuality = opts.mode === 'DEEP_GS_WASM'
+          ? Math.min(0.95, opts.quality + 0.05)
+          : opts.quality;
+
+        const compressedDataUrl = tempCanvas.toDataURL('image/jpeg', effectiveQuality);
+
+        const base64Data = compressedDataUrl.split(',')[1];
+        const compSingleImgBytes = Math.round((base64Data.length * 3) / 4);
+        if (singleOrigBytes.byteLength > 0) {
+          const sampleRatio = Math.min(1.0, Math.max(0.08, (compSingleImgBytes + 2048) / singleOrigBytes.byteLength));
+          pdfStats.measuredSampleRatio = sampleRatio;
+        }
+
+        const compImg = new Image();
+        await new Promise((resolve, reject) => {
+          compImg.onload = resolve;
+          compImg.onerror = reject;
+          compImg.src = compressedDataUrl;
+        });
+
+        compPreviewCanvas.width = origPreviewCanvas.width;
+        compPreviewCanvas.height = origPreviewCanvas.height;
+        const compCtx = compPreviewCanvas.getContext('2d');
+        compCtx.fillStyle = '#FFFFFF';
+        compCtx.fillRect(0, 0, compPreviewCanvas.width, compPreviewCanvas.height);
+        compCtx.imageSmoothingEnabled = true;
+        compCtx.drawImage(compImg, 0, 0, compPreviewCanvas.width, compPreviewCanvas.height);
+
+        updateRealTimeEstimateUI();
+        const estTotalBytes = calculateEstimatedSizeBytes();
+        const origTotalBytes = currentBuffer.byteLength;
+        const savedPct = origTotalBytes > 0
+          ? Math.max(0, ((origTotalBytes - estTotalBytes) / origTotalBytes) * 100).toFixed(1)
+          : '0.0';
+
+        origPreviewHeaderLabel.textContent = `원본 (${formatBytes(origTotalBytes)})`;
+        compPreviewHeaderLabel.textContent = `압축본 (예상 약 ${formatBytes(estTotalBytes)} · -${savedPct}%)`;
+
+        origPageBadge.textContent = `${selectedPageNum} 페이지 원본`;
+        compPageBadge.textContent = `${selectedPageNum} 페이지 미리보기 (${opts.dpi} DPI · 품질 ${Math.round(opts.quality * 100)}%)`;
+      } catch (err) {
+        console.error(err);
+      } finally {
+        comparePreviewBtn.disabled = false;
+        comparePreviewBtn.innerHTML = origBtnHtml;
+        lucide.createIcons();
+      }
+    }
+
+    async function recompressImageBytes(uint8Array, targetQuality, scaleRatio) {
+      const blob = new Blob([uint8Array]);
+      const bitmap = await createImageBitmap(blob);
+      const targetW = Math.max(16, Math.round(bitmap.width * scaleRatio));
+      const targetH = Math.max(16, Math.round(bitmap.height * scaleRatio));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, targetW, targetH);
+      ctx.drawImage(bitmap, 0, 0, targetW, targetH);
+      bitmap.close();
+
+      const dataUrl = canvas.toDataURL('image/jpeg', targetQuality);
+      const base64 = dataUrl.split(',')[1];
+      const binaryStr = atob(base64);
+      const outBytes = new Uint8Array(binaryStr.length);
+      for (let i = 0; i < binaryStr.length; i++) {
+        outBytes[i] = binaryStr.charCodeAt(i);
+      }
+      return { outBytes, width: targetW, height: targetH };
+    }
+
+    async function runEngine1PdfLib(buffer, options) {
+      setProgress(15, 'PDF 객체 트리 파싱 중...');
+      const pdfDoc = await PDFLib.PDFDocument.load(buffer, { ignoreEncryption: true });
+
+      if (options.stripMeta) {
+        pdfDoc.setTitle('');
+        pdfDoc.setAuthor('');
+        pdfDoc.setSubject('');
+        pdfDoc.setKeywords([]);
+        pdfDoc.setProducer('');
+        pdfDoc.setCreator('');
+      }
+
+      const scaleMap = { '72': 0.5, '150': 0.75, '220': 0.9 };
+      const scaleRatio = scaleMap[String(options.dpi)] || 0.75;
+
+      const enumerated = pdfDoc.context.enumerateIndirectObjects();
+      for (const [, obj] of enumerated) {
+        if (obj instanceof PDFLib.PDFRawStream && obj.dict) {
+          const subtype = obj.dict.get(PDFLib.PDFName.of('Subtype'));
+          if (subtype && subtype.toString() === '/Image') {
+            const filter = obj.dict.get(PDFLib.PDFName.of('Filter'));
+            const filterName = filter ? filter.toString() : '';
+            if (filterName.includes('DCTDecode') || filterName.includes('JPXDecode')) {
+              try {
+                const origBytes = obj.contents;
+                if (origBytes && origBytes.length > 4096) {
+                  const { outBytes, width, height } = await recompressImageBytes(origBytes, options.quality, scaleRatio);
+                  if (outBytes.length < origBytes.length) {
+                    obj.contents = outBytes;
+                    obj.dict.set(PDFLib.PDFName.of('Width'), PDFLib.PDFNumber.of(width));
+                    obj.dict.set(PDFLib.PDFName.of('Height'), PDFLib.PDFNumber.of(height));
+                    obj.dict.set(PDFLib.PDFName.of('Filter'), PDFLib.PDFName.of('DCTDecode'));
+                    obj.dict.set(PDFLib.PDFName.of('ColorSpace'), PDFLib.PDFName.of('DeviceRGB'));
+                    obj.dict.set(PDFLib.PDFName.of('BitsPerComponent'), PDFLib.PDFNumber.of(8));
+                    obj.dict.set(PDFLib.PDFName.of('Length'), PDFLib.PDFNumber.of(outBytes.length));
+                  }
+                }
+              } catch (imgErr) {}
+            }
+          }
+        }
+      }
+
+      setProgress(65, '페이지 트리 재구성 중...');
+      const cleanDoc = await PDFLib.PDFDocument.create();
+      const pageIndices = pdfDoc.getPageIndices();
+      const copiedPages = await cleanDoc.copyPages(pdfDoc, pageIndices);
+      copiedPages.forEach(p => cleanDoc.addPage(p));
+
+      setProgress(85, '압축 패키징 중...');
+      return await cleanDoc.save({
+        useObjectStreams: options.useObjectStreams,
+        addDefaultPage: false
+      });
+    }
+
+    async function runEngine2GhostscriptWasm(buffer, options) {
+      setProgress(15, 'WASM 엔진 불러오는 중...');
+      const pdfSettingsMap = { '72': '/screen', '150': '/ebook', '220': '/printer' };
+      const gsPreset = pdfSettingsMap[String(options.dpi)] || '/ebook';
+
+      try {
+        const gsModuleUrl = 'https://cdn.jsdelivr.net/npm/@jspawn/ghostscript-wasm@0.0.2/gs.mjs';
+        const gsModule = await import(gsModuleUrl);
+
+        if (gsModule && typeof gsModule.default === 'function') {
+          setProgress(45, 'WASM 인스턴스 초기화 중...');
+          const gs = await gsModule.default();
+          gs.FS.writeFile('input.pdf', new Uint8Array(buffer));
+          setProgress(70, '압축 파이프라인 실행 중...');
+
+          await gs.callMain([
+            '-sDEVICE=pdfwrite',
+            '-dCompatibilityLevel=1.5',
+            `-dPDFSETTINGS=${gsPreset}`,
+            '-dNOPAUSE',
+            '-dQUIET',
+            '-dBATCH',
+            '-sOutputFile=output.pdf',
+            'input.pdf'
+          ]);
+
+          return gs.FS.readFile('output.pdf');
+        }
+        throw new Error();
+      } catch (wasmErr) {
+        setProgress(45, '내장 하이브리드 압축 수행 중...');
+        const stage1Bytes = await runEngine1PdfLib(buffer, options);
+        if (stage1Bytes.byteLength < buffer.byteLength * 0.92) return stage1Bytes;
+        return await runEngine3Rasterize(buffer, { ...options, quality: Math.min(0.85, options.quality + 0.05) });
+      }
+    }
+
+    async function runEngine3Rasterize(buffer, options) {
+      setProgress(10, 'PDF.js 렌더러 초기화 중...');
+      const loadingTask = pdfjsLib.getDocument({ data: buffer.slice(0) });
+      const pdf = await loadingTask.promise;
+      const numPages = pdf.numPages;
+
+      const newPdfDoc = await PDFLib.PDFDocument.create();
+      const dpiScaleMap = { '72': 1.0, '150': 1.5, '220': 2.0 };
+      const renderScale = dpiScaleMap[String(options.dpi)] || 1.5;
+
+      for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+        const pct = 15 + Math.round((pageNum / numPages) * 75);
+        setProgress(pct, `페이지 렌더링 (${pageNum} / ${numPages})...`);
+
+        const page = await pdf.getPage(pageNum);
+        const origViewport = page.getViewport({ scale: 1.0 });
+        const scaledViewport = page.getViewport({ scale: renderScale });
+
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.floor(scaledViewport.width);
+        canvas.height = Math.floor(scaledViewport.height);
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        await page.render({ canvasContext: ctx, viewport: scaledViewport }).promise;
+
+        const jpegDataUrl = canvas.toDataURL('image/jpeg', options.quality);
+        const jpgImage = await newPdfDoc.embedJpg(jpegDataUrl);
+
+        const newPage = newPdfDoc.addPage([origViewport.width, origViewport.height]);
+        newPage.drawImage(jpgImage, { x: 0, y: 0, width: origViewport.width, height: origViewport.height });
+      }
+
+      setProgress(92, 'PDF 패키징 중...');
+      return await newPdfDoc.save({ useObjectStreams: options.useObjectStreams });
+    }
+
+    compressBtn.addEventListener('click', async () => {
+      if (!currentBuffer || !currentFile) return;
+
+      compressBtn.disabled = true;
+      resultSummaryBox.classList.add('hidden');
+      fileStatusBadge.textContent = '압축 진행 중...';
+
+      const options = getCurrentOptions();
+      const startTime = performance.now();
+
+      try {
+        let compressedBytes = null;
+
+        if (options.mode === 'FAST_PDFLIB') {
+          compressedBytes = await runEngine1PdfLib(currentBuffer.slice(0), options);
+          if (options.preventLarger && compressedBytes.byteLength >= currentBuffer.byteLength * 0.98) {
+            const fallbackBytes = await runEngine3Rasterize(currentBuffer.slice(0), options);
+            if (fallbackBytes.byteLength < compressedBytes.byteLength) compressedBytes = fallbackBytes;
+          }
+        } else if (options.mode === 'DEEP_GS_WASM') {
+          compressedBytes = await runEngine2GhostscriptWasm(currentBuffer.slice(0), options);
+        } else if (options.mode === 'EXTREME_RASTER') {
+          compressedBytes = await runEngine3Rasterize(currentBuffer.slice(0), options);
+        }
+
+        if (options.preventLarger && compressedBytes.byteLength >= currentBuffer.byteLength) {
+          compressedBytes = new Uint8Array(currentBuffer.slice(0));
+        }
+
+        const elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
+        const origSize = currentBuffer.byteLength;
+        const newSize = compressedBytes.byteLength;
+        const diff = origSize - newSize;
+        const ratio = origSize > 0 ? ((diff / origSize) * 100).toFixed(1) : '0.0';
+
+        setProgress(100, `압축 완료 (${elapsed}초)`);
+        fileStatusBadge.textContent = '압축 완료';
+        compSizeMetric.textContent = formatBytes(newSize);
+        compRatioSub.textContent = diff > 0 ? `-${ratio}% 확정` : `원본 유지`;
+
+        if (currentDownloadUrl) URL.revokeObjectURL(currentDownloadUrl);
+        const outBlob = new Blob([compressedBytes], { type: 'application/pdf' });
+        currentDownloadUrl = URL.createObjectURL(outBlob);
+
+        const baseName = currentFile.name.replace(/\.pdf$/i, '');
+        downloadLink.href = currentDownloadUrl;
+        downloadLink.download = `${baseName}_compressed.pdf`;
+
+        savedBadgeText.textContent = diff > 0 ? `${ratio}% 감소 (-${formatBytes(diff)})` : `0% (이미 최적화됨)`;
+        resultSummaryBox.classList.remove('hidden');
+      } catch (err) {
+        console.error(err);
+        setProgress(0, '오류 발생');
+        fileStatusBadge.textContent = '오류';
+      } finally {
+        compressBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
