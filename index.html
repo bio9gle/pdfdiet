@@ -62,11 +62,12 @@
   <!-- Main Content -->
   <main class="max-w-6xl mx-auto w-full px-6 py-8 flex-1 space-y-8">
     
-    <!-- Top Grid: Left Column (Upload, Engine, Comparison) & Right Column (Options, Results) -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Top Grid: Left Column (Upload, Engine, Comparison) & Right Column (Results, Logo, Options) -->
+    <!-- items-stretch: 좌우 열 높이를 같게 맞춰 두 열의 마지막 박스 아래선이 일치하도록 함 -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
       
       <!-- Left Column: Upload, Engine Selection, and Comparison Preview Card (7 cols) -->
-      <div class="lg:col-span-7 space-y-6">
+      <div class="lg:col-span-7 space-y-6 flex flex-col">
         
         <!-- Step 1: Upload Box -->
         <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
@@ -183,8 +184,8 @@
           </div>
         </section>
 
-        <!-- Moved Here: Original vs Compressed Side-by-Side Quality Preview Controller Card -->
-        <section class="bg-indigo-950 text-white rounded-2xl p-6 shadow-sm border border-indigo-900 space-y-4">
+        <!-- Original vs Compressed Side-by-Side Quality Preview Controller Card -->
+        <section class="bg-indigo-950 text-white rounded-2xl p-6 shadow-sm border border-indigo-900 space-y-4 flex-1 flex flex-col justify-between">
           <div>
             <h3 class="text-sm font-bold flex items-center gap-1.5">
               <i data-lucide="split-square-horizontal" class="w-4 h-4 text-indigo-300"></i>
@@ -213,70 +214,9 @@
 
       </div>
 
-      <!-- Right Column: Fine-Tuning Options & Results Card (5 cols) -->
-      <div class="lg:col-span-5 space-y-6">
+      <!-- Right Column: Result / Estimate Card (Top), Logo Image (Middle), & Fine-Tuning Options (Bottom) (5 cols) -->
+      <div class="lg:col-span-5 space-y-6 flex flex-col">
         
-        <!-- Step 3: Fine-tuning Options (Moved to Right Column) -->
-        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-          <div class="flex items-center justify-between mb-4">
-            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-              <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs flex items-center justify-center font-bold">3</span>
-              세부 압축 옵션 설정
-            </h2>
-            <span id="engineRuleNotice" class="text-[10px] font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">선택한 엔진 연동 설정 활성화</span>
-          </div>
-
-          <div class="space-y-4">
-            <!-- Image Quality Slider -->
-            <div id="qualityWrapper" class="bg-slate-50 p-4 rounded-xl border border-slate-200 transition-all">
-              <div class="flex justify-between items-center mb-2">
-                <label for="qualityInput" class="text-xs font-bold text-slate-700">JPEG 이미지 품질</label>
-                <span id="qualityValueLabel" class="text-xs font-bold text-indigo-600">70% (권장)</span>
-              </div>
-              <input id="qualityInput" type="range" min="20" max="95" step="5" value="70" class="w-full accent-indigo-600 cursor-pointer" />
-              <div class="flex justify-between text-[11px] text-slate-400 mt-1">
-                <span>최대 압축 (20%)</span>
-                <span>고화질 (95%)</span>
-              </div>
-            </div>
-
-            <!-- Target DPI / Scale Select -->
-            <div id="dpiWrapper" class="bg-slate-50 p-4 rounded-xl border border-slate-200 transition-all">
-              <div class="flex justify-between items-center mb-2">
-                <label for="dpiInput" class="text-xs font-bold text-slate-700">목표 해상도 (DPI / 스케일)</label>
-                <span id="dpiValueLabel" class="text-xs font-bold text-indigo-600">150 DPI (웹/화면용)</span>
-              </div>
-              <select id="dpiInput" class="w-full mt-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:border-indigo-600">
-                <option value="72">72 DPI — 최소 용량 (모바일/열람용)</option>
-                <option value="150" selected>150 DPI — 표준 균형 (일반 문서 권장)</option>
-                <option value="220">220 DPI — 고화질 유지 (프린트 겸용)</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Additional Checkboxes with Dynamic Dimming -->
-          <div class="mt-4 flex flex-col gap-2.5 pt-3 border-t border-slate-100 text-xs text-slate-600">
-            <label id="chkMetaLabel" class="flex items-center gap-2 cursor-pointer transition-opacity">
-              <input type="checkbox" id="stripMetaCheck" checked class="rounded text-indigo-600 focus:ring-indigo-500" />
-              <span>작성자/메타데이터(XMP) 제거</span>
-            </label>
-            <label id="chkObjLabel" class="flex items-center gap-2 cursor-pointer transition-opacity">
-              <input type="checkbox" id="objectStreamCheck" checked class="rounded text-indigo-600 focus:ring-indigo-500" />
-              <span>PDF 1.5+ 오브젝트 스트림 압축</span>
-            </label>
-            <label id="chkPreventLabel" class="flex items-center gap-2 cursor-pointer transition-opacity">
-              <input type="checkbox" id="preventLargerCheck" checked class="rounded text-indigo-600 focus:ring-indigo-500" />
-              <span>용량 역전 시 자동 보조 압축</span>
-            </label>
-          </div>
-
-          <!-- Action Button -->
-          <button id="compressBtn" disabled class="mt-6 w-full py-3.5 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
-            <i data-lucide="zap" class="w-4 h-4"></i>
-            <span>전체 페이지 PDF 용량 줄이기 실행</span>
-          </button>
-        </section>
-
         <!-- Result & Real-Time Estimate Card -->
         <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-5">
           <div class="flex items-center justify-between">
@@ -287,7 +227,7 @@
             <span class="text-[11px] font-semibold px-2.5 py-1 rounded bg-indigo-50 text-indigo-600 border border-indigo-200">실시간 예측</span>
           </div>
 
-          <!-- Comparison Metrics (Original vs Estimated / Actual) -->
+          <!-- Comparison Metrics -->
           <div class="grid grid-cols-3 gap-2">
             <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
               <p class="text-[10px] text-slate-400 font-medium">원본 용량</p>
@@ -329,6 +269,57 @@
               </a>
             </div>
           </div>
+        </section>
+
+        <!-- Logo Image Inserted in Between: 박스 선·그림자·흰 배경 없이 페이지 배경과 하나로 보이게 함.
+             flex-1 로 오른쪽 열이 더 짧을 때 남는 높이를 이 영역이 채워 아래 박스 위치를 맞춤 -->
+        <div class="flex-1 flex items-center justify-center py-1">
+          <img src="logo.png" alt="PDF Diet Pro Logo" class="max-h-32 w-auto object-contain mix-blend-multiply" />
+        </div>
+
+        <!-- Step 3: Fine-tuning Options (Bottom of Right Column) -->
+        <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs flex items-center justify-center font-bold">3</span>
+              세부 압축 옵션 설정
+            </h2>
+            <span id="engineRuleNotice" class="text-[10px] font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md">고급 최적화 자동 적용 중</span>
+          </div>
+
+          <div class="space-y-4">
+            <!-- Image Quality Slider -->
+            <div id="qualityWrapper" class="bg-slate-50 p-4 rounded-xl border border-slate-200 transition-all">
+              <div class="flex justify-between items-center mb-2">
+                <label for="qualityInput" class="text-xs font-bold text-slate-700">JPEG 이미지 품질</label>
+                <span id="qualityValueLabel" class="text-xs font-bold text-indigo-600">70% (권장)</span>
+              </div>
+              <input id="qualityInput" type="range" min="20" max="95" step="5" value="70" class="w-full accent-indigo-600 cursor-pointer" />
+              <div class="flex justify-between text-[11px] text-slate-400 mt-1">
+                <span>최대 압축 (20%)</span>
+                <span>고화질 (95%)</span>
+              </div>
+            </div>
+
+            <!-- Target DPI / Scale Select -->
+            <div id="dpiWrapper" class="bg-slate-50 p-4 rounded-xl border border-slate-200 transition-all">
+              <div class="flex justify-between items-center mb-2">
+                <label for="dpiInput" class="text-xs font-bold text-slate-700">목표 해상도 (DPI / 스케일)</label>
+                <span id="dpiValueLabel" class="text-xs font-bold text-indigo-600">150 DPI (웹/화면용)</span>
+              </div>
+              <select id="dpiInput" class="w-full mt-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:border-indigo-600">
+                <option value="72">72 DPI — 최소 용량 (모바일/열람용)</option>
+                <option value="150" selected>150 DPI — 표준 균형 (일반 문서 권장)</option>
+                <option value="220">220 DPI — 고화질 유지 (프린트 겸용)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <button id="compressBtn" disabled class="mt-6 w-full py-3.5 px-6 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-sm shadow-sm transition flex items-center justify-center gap-2">
+            <i data-lucide="zap" class="w-4 h-4"></i>
+            <span>전체 페이지 PDF 용량 줄이기 실행</span>
+          </button>
         </section>
 
       </div>
@@ -445,15 +436,9 @@
     const qualityValueLabel = document.getElementById('qualityValueLabel');
     const dpiInput = document.getElementById('dpiInput');
     const dpiValueLabel = document.getElementById('dpiValueLabel');
-    const stripMetaCheck = document.getElementById('stripMetaCheck');
-    const objectStreamCheck = document.getElementById('objectStreamCheck');
-    const preventLargerCheck = document.getElementById('preventLargerCheck');
 
     const qualityWrapper = document.getElementById('qualityWrapper');
     const dpiWrapper = document.getElementById('dpiWrapper');
-    const chkMetaLabel = document.getElementById('chkMetaLabel');
-    const chkObjLabel = document.getElementById('chkObjLabel');
-    const chkPreventLabel = document.getElementById('chkPreventLabel');
     const engineRuleNotice = document.getElementById('engineRuleNotice');
 
     const compressBtn = document.getElementById('compressBtn');
@@ -506,9 +491,9 @@
         mode: selectedModeEl ? selectedModeEl.value : 'FAST_PDFLIB',
         quality: parseInt(qualityInput.value, 10) / 100,
         dpi: parseInt(dpiInput.value, 10),
-        stripMeta: stripMetaCheck.checked,
-        useObjectStreams: objectStreamCheck.checked,
-        preventLarger: preventLargerCheck.checked
+        stripMeta: true,
+        useObjectStreams: true,
+        preventLarger: true
       };
     }
 
@@ -519,23 +504,14 @@
       if (mode === 'FAST_PDFLIB') {
         setControlEnabled(qualityInput, qualityWrapper, true);
         setControlEnabled(dpiInput, dpiWrapper, true);
-        setCheckboxEnabled(stripMetaCheck, chkMetaLabel, true);
-        setCheckboxEnabled(objectStreamCheck, chkObjLabel, true);
-        setCheckboxEnabled(preventLargerCheck, chkPreventLabel, true);
         engineRuleNotice.textContent = '방식 1: 모든 최적화 옵션 활성화';
       } else if (mode === 'DEEP_GS_WASM') {
         setControlEnabled(qualityInput, qualityWrapper, true);
         setControlEnabled(dpiInput, dpiWrapper, true);
-        setCheckboxEnabled(stripMetaCheck, chkMetaLabel, true);
-        setCheckboxEnabled(objectStreamCheck, chkObjLabel, false);
-        setCheckboxEnabled(preventLargerCheck, chkPreventLabel, true);
         engineRuleNotice.textContent = '방식 2: 화질·DPI 프리셋 및 메타데이터 정리';
       } else if (mode === 'EXTREME_RASTER') {
         setControlEnabled(qualityInput, qualityWrapper, true);
         setControlEnabled(dpiInput, dpiWrapper, true);
-        setCheckboxEnabled(stripMetaCheck, chkMetaLabel, false);
-        setCheckboxEnabled(objectStreamCheck, chkObjLabel, true);
-        setCheckboxEnabled(preventLargerCheck, chkPreventLabel, true);
         engineRuleNotice.textContent = '방식 3: 이미지 변환 품질 및 DPI 리샘플링';
       }
     }
@@ -548,17 +524,6 @@
       } else {
         wrapperEl.classList.add('opacity-40', 'bg-slate-100');
         wrapperEl.classList.remove('bg-slate-50');
-      }
-    }
-
-    function setCheckboxEnabled(chkEl, labelEl, enabled) {
-      chkEl.disabled = !enabled;
-      if (enabled) {
-        labelEl.classList.remove('opacity-40', 'cursor-not-allowed');
-        labelEl.classList.add('cursor-pointer');
-      } else {
-        labelEl.classList.add('opacity-40', 'cursor-not-allowed');
-        labelEl.classList.remove('cursor-pointer');
       }
     }
 
@@ -580,16 +545,12 @@
       if (opts.mode === 'FAST_PDFLIB') {
         if (imgBytes > 0) {
           const compressedImg = imgBytes * Math.min(0.95, dpiFactor * qFactor * 1.35 + 0.08);
-          const overheadFactor = (opts.stripMeta ? 0.92 : 0.98) * (opts.useObjectStreams ? 0.90 : 1.0);
+          const overheadFactor = 0.92 * 0.90;
           estimated = compressedImg + nonImgBytes * overheadFactor;
         } else {
-          const structOnly = total * (opts.stripMeta ? 0.93 : 0.98) * (opts.useObjectStreams ? 0.90 : 1.0);
-          if (opts.preventLarger) {
-            const perPageRasterEst = totalPages * (opts.dpi === 72 ? 65000 : opts.dpi === 150 ? 145000 : 260000) * qFactor;
-            estimated = Math.min(structOnly, perPageRasterEst);
-          } else {
-            estimated = structOnly;
-          }
+          const structOnly = total * 0.93 * 0.90;
+          const perPageRasterEst = totalPages * (opts.dpi === 72 ? 65000 : opts.dpi === 150 ? 145000 : 260000) * qFactor;
+          estimated = Math.min(structOnly, perPageRasterEst);
         }
       } else if (opts.mode === 'DEEP_GS_WASM') {
         const compressedImg = imgBytes * Math.min(0.90, dpiFactor * qFactor * 1.15 + 0.06);
@@ -605,9 +566,7 @@
         estimated = estimated * 0.4 + (total * pdfStats.measuredSampleRatio) * 0.6;
       }
 
-      if (opts.preventLarger) {
-        estimated = Math.min(total, estimated);
-      }
+      estimated = Math.min(total, estimated);
 
       return Math.max(8192, Math.round(estimated));
     }
@@ -654,10 +613,6 @@
       const map = { '72': '72 DPI (모바일/최소)', '150': '150 DPI (웹/화면용)', '220': '220 DPI (인쇄 겸용)' };
       dpiValueLabel.textContent = map[val] || `${val} DPI`;
       onOptionChanged();
-    });
-
-    [stripMetaCheck, objectStreamCheck, preventLargerCheck].forEach(chk => {
-      chk.addEventListener('change', onOptionChanged);
     });
 
     document.querySelectorAll('input[name="engineMode"]').forEach(radio => {
@@ -990,14 +945,12 @@
       setProgress(15, 'PDF 객체 트리 파싱 중...');
       const pdfDoc = await PDFLib.PDFDocument.load(buffer, { ignoreEncryption: true });
 
-      if (options.stripMeta) {
-        pdfDoc.setTitle('');
-        pdfDoc.setAuthor('');
-        pdfDoc.setSubject('');
-        pdfDoc.setKeywords([]);
-        pdfDoc.setProducer('');
-        pdfDoc.setCreator('');
-      }
+      pdfDoc.setTitle('');
+      pdfDoc.setAuthor('');
+      pdfDoc.setSubject('');
+      pdfDoc.setKeywords([]);
+      pdfDoc.setProducer('');
+      pdfDoc.setCreator('');
 
       const scaleMap = { '72': 0.5, '150': 0.75, '220': 0.9 };
       const scaleRatio = scaleMap[String(options.dpi)] || 0.75;
@@ -1038,7 +991,7 @@
 
       setProgress(85, '압축 패키징 중...');
       return await cleanDoc.save({
-        useObjectStreams: options.useObjectStreams,
+        useObjectStreams: true,
         addDefaultPage: false
       });
     }
@@ -1115,7 +1068,7 @@
       }
 
       setProgress(92, 'PDF 패키징 중...');
-      return await newPdfDoc.save({ useObjectStreams: options.useObjectStreams });
+      return await newPdfDoc.save({ useObjectStreams: true });
     }
 
     compressBtn.addEventListener('click', async () => {
@@ -1133,7 +1086,7 @@
 
         if (options.mode === 'FAST_PDFLIB') {
           compressedBytes = await runEngine1PdfLib(currentBuffer.slice(0), options);
-          if (options.preventLarger && compressedBytes.byteLength >= currentBuffer.byteLength * 0.98) {
+          if (compressedBytes.byteLength >= currentBuffer.byteLength * 0.98) {
             const fallbackBytes = await runEngine3Rasterize(currentBuffer.slice(0), options);
             if (fallbackBytes.byteLength < compressedBytes.byteLength) compressedBytes = fallbackBytes;
           }
@@ -1143,7 +1096,7 @@
           compressedBytes = await runEngine3Rasterize(currentBuffer.slice(0), options);
         }
 
-        if (options.preventLarger && compressedBytes.byteLength >= currentBuffer.byteLength) {
+        if (compressedBytes.byteLength >= currentBuffer.byteLength) {
           compressedBytes = new Uint8Array(currentBuffer.slice(0));
         }
 
